@@ -3,245 +3,419 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>打飛機日常紀錄 - 打飛機日常紀錄</title>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>  
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>  
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">  
+    <title>打飛機日常紀錄 - 來一發？</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        body { font-family: 'Noto Sans TC', sans-serif; background: linear-gradient(135deg, #1e3c72, #2a5298); color: #fff; min-height: 100vh; }  
-        .container { max-width: 900px; }  
-        .card { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: none; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-        .hero { padding: 4rem 0; text-align: center; }  
-        .hero h1 { font-size: 3rem; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .hero p { font-size: 1.2rem; opacity: 0.9; }
-        .form-control, .form-select { background: rgba(255,255,255,0.2); border: none; color: #fff; }
-        .form-control::placeholder { color: rgba(255,255,255,0.7); }
-        .btn-primary { background: #ff6b6b; border: none; transition: all 0.3s; }  
-        .btn-primary:hover { background: #ff8787; transform: translateY(-2px); }
-        .table { background: rgba(255,255,255,0.15); }
-        .table th, .table td { border: none; }
-        footer { margin-top: 5rem; padding: 2rem 0; text-align: center; opacity: 0.7; font-size: 0.9rem; }
+        :root {
+            --bg-color: #000000;
+            --input-bg: #111111;
+            --border-color: #333333;
+            --highlight: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Courier New', Courier, monospace, sans-serif; /* 仿終端機風格 */
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* 文字漸層效果 */
+        h1, h2, .gradient-text {
+            background: linear-gradient(180deg, #FFFFFF 20%, #666666 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+            font-weight: normal;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 卡片與區塊樣式 */
+        .section-box {
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(5px);
+        }
+
+        .section-title {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 5px;
+        }
+
+        /* 輸入框樣式 */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        input {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: white;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #666;
+        }
+
+        /* 按鈕樣式 */
+        .btn {
+            background: white;
+            color: black;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-share {
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            margin-top: 0;
+        }
+
+        /* 列表樣式 */
+        .history-list, .rank-list {
+            list-style: none;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .history-item, .rank-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #111;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        .rank-item span:first-child {
+            color: white;
+        }
+
+        .rank-badge {
+            display: inline-block;
+            width: 20px;
+            text-align: center;
+            margin-right: 10px;
+            color: #666;
+        }
+
+        .top-3 {
+            color: #fff !important;
+            font-weight: bold;
+        }
+
+        /* 滾動條樣式 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 3px;
+        }
+
+        /* 免責聲明 */
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #444;
+            max-width: 400px;
+            line-height: 1.5;
+        }
+
+        /* 截圖時隱藏不需要的元素 */
+        .no-capture {
+            display: block;
+        }
     </style>
 </head>
 <body>
-    <div class="container py-5">
-        <!-- 登入頁面 -->
-        <div id="loginSection" class="text-center hero">  
-            <h1>✈️ 私人飛行日誌</h1>
-            <p class="lead">歡迎來到你的私人紀錄空間。<br>這裡只屬於你自己</p>
-            <div class="card mx-auto mt-5 p-4" style="max-width: 400px;">  
-                <h4>使用 Email 登入</h4>  
-                <div class="mb-3">
-                    <input type="email" id="loginEmail" class="form-control" placeholder="輸入你的 Email">  
-                </div>
-                <button id="sendLinkBtn" class="btn btn-primary w-100">發送email登入連結</button>  
-                <p id="loginMsg" class="mt-3 text-warning"></p>
+
+    <div class="container" id="capture-area">
+        <header>
+            <h1>打飛機日常紀錄</h1>
+            <h2>今天來一發？</h2>
+        </header>
+
+        <div class="section-box">
+            <div class="section-title">記下你的每一次</div>
+            <div class="form-group">
+                <label>你的暱稱</label>
+                <input type="text" id="nickname" placeholder="輸入你的稱號...">
             </div>
+            <div class="form-group">
+                <label>時間</label>
+                <input type="datetime-local" id="record-time">
+            </div>
+            <button class="btn" onclick="addRecord()">確認紀錄</button>
         </div>
 
-        <!-- 主應用頁面 -->
-        <div id="appSection" class="d-none">  
-            <div class="hero">
-                <h1>✈️ 歡迎回來，<span id="userNickname">飛行員</span>！</h1>  
-                <p>今天也很適合來一發。</p>  
-            </div>
+        <div class="section-box" id="history-section" style="display:none;">
+            <div class="section-title">你的近期戰績</div>
+            <ul class="history-list" id="history-list">
+                </ul>
+        </div>
 
-            <!-- 修改暱稱 -->
-            <div class="card p-4 mb-4">  
-                <h5>修改暱稱</h5>
-                <div class="input-group">  
-                    <input type="text" id="nicknameInput" class="form-control" placeholder="輸入新暱稱">
-                    <button id="updateNicknameBtn" class="btn btn-primary">更新</button>
-                </div>
-            </div>
+        <div class="section-box">
+            <div class="section-title">本月尻槍王 (Top 30)</div>
+            <ul class="rank-list" id="rank-list">
+                <li class="rank-item" style="justify-content: center; color: #444;">載入中...</li>
+            </ul>
+        </div>
 
-            <!-- 記錄飛行 -->
-            <div class="card p-4 mb-5">
-                <h5>發射成功</h5>  
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label>日期</label>  
-                        <input type="date" id="recordDate" class="form-control">  
-                    </div>
-                    <div class="col-md-4">    
-                        <label>時間（大約）</label>
-                        <select id="recordHour" class="form-select"></select>
-                    </div>
-                    <div class="col-md-2 d-flex align-items-end">  
-                        <button id="addRecordBtn" class="btn btn-primary w-100">記錄</button>  
-                    </div>
-                </div>
-            </div>
-
-            <!-- 月排行榜 -->
-            <div class="card p-4">
-                <h5>🪜 本月排行榜（前 50 名）</h5>
-                <div id="leaderboardLoading" class="text-center py-4">載入中...</div>
-                <table class="table table-hover text-white d-none" id="leaderboardTable">  
-                    <thead>
-                        <tr>
-                            <th>排名</th>
-                            <th>暱稱</th>
-                            <th>次數</th>
-                        </tr>
-                    </thead>
-                    <tbody id="leaderboardBody"></tbody>
-                </table>
-            </div>
-
-            <div class="text-center mt-4">
-                <button id="logoutBtn" class="btn btn-outline-light">登出</button>  
-            </div>
+        <div class="section-box no-capture">
+            <button class="btn btn-share" onclick="shareStats()">分享你的戰績 📸</button>
+            <p id="share-msg" style="text-align: center; font-size: 0.8rem; color: #666; margin-top: 10px; display: none;">截圖已生成，連結已複製！</p>
         </div>
     </div>
 
-    <footer>
-        <p>免責聲明：此網站僅用於個人追踪，只有娛樂價值，不提供其他額外的服務。</p>
+    <footer class="footer">
+        免責聲明：此網站僅用於個人追蹤，只有娛樂價值，不提供其他額外服務。請適度操作，注意身體健康。
     </footer>
 
-    <script>
-        // ←←←←←←←←←←←←←← 這裡要把你剛剛複製的 firebaseConfig 貼進來 ←←←←←←←←←←←←←←
-        const firebaseConfig = {
-              apiKey: "AIzaSyDub01y9nvtEKGrVg6DWLYVwVlBs2YFgxs",
-              authDomain: "diy-daily-record.firebaseapp.com",
-              projectId: "diy-daily-record",
-              storageBucket: "diy-daily-record.firebasestorage.app",    
-              messagingSenderId: "1030894380378",
-              appId: "1:1030894380378:web:16b1ce08b6a4e51f1e3f63",
-              measurementId: "G-NPT3TLF0PK"
-        };
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+<script>
+    // 初始化時間輸入框
+    function initTime() {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('record-time').value = now.toISOString().slice(0, 16);
+    }
 
-        // 時間選單 00-23
-        const hourSelect = document.getElementById('recordHour');
-        for (let i = 0; i < 24; i++) {
-            const opt = document.createElement('option');
-            opt.value = i.toString().padStart(2, '0');
-            opt.textContent = i.toString().padStart(2, '0') + ':00';
-            hourSelect.appendChild(opt);
-        }
+    // 分享與截圖功能
+    async function shareStats() {
+        const captureArea = document.getElementById('capture-area');
+        const shareMsg = document.getElementById('share-msg');
+        const shareBtn = document.querySelector('.btn-share');
+        
+        shareBtn.innerText = "生成截圖中...";
+        try {
+            const url = window.location.href;
+            await navigator.clipboard.writeText(`我的戰績在此！ ${url}`);
 
-        // 預設今天
-        document.getElementById('recordDate').valueAsDate = new Date();
-
-        // 魔法連結設定
-        const actionCodeSettings = {
-            url: window.location.href.split('?')[0],  // 返回目前頁面
-            handleCodeInApp: true
-        };
-
-        // 發送登入連結
-        document.getElementById('sendLinkBtn').onclick = () => {
-            const email = document.getElementById('loginEmail').value.trim();
-            if (!email) return alert('請輸入 Email');  
-            document.getElementById('loginMsg').textContent = '發送中...';
-            auth.sendSignInLinkToEmail(email, actionCodeSettings)
-                .then(() => {
-                    window.localStorage.setItem('emailForSignIn', email);
-                    document.getElementById('loginMsg').textContent = '已發送到你的信箱！請去收信並點擊連結登入（也檢查垃圾郵件）';
-                })
-                .catch(err => alert('錯誤：' + err.message));
-        };
-
-        // 如果是從郵件點回來的
-        if (auth.isSignInWithEmailLink(window.location.href)) {
-            let email = window.localStorage.getItem('emailForSignIn');
-            if (!email) email = prompt('請再輸入一次你的 Email');
-            auth.signInWithEmailLink(email, window.location.href)
-                .then(() => window.localStorage.removeItem('emailForSignIn'))
-                .catch(err => alert('登入失敗：' + err.message));
-        }
-
-        // 登入狀態監聽
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                document.getElementById('loginSection').classList.add('d-none');
-                document.getElementById('appSection').classList.remove('d-none');
-                loadNickname(user);
-                loadLeaderboard();
-            } else {
-                document.getElementById('loginSection').classList.remove('d-none');
-                document.getElementById('appSection').classList.add('d-none');
-            }
-        });
-
-        function loadNickname(user) {
-            db.collection('users').doc(user.uid).get().then(doc => {
-                const nick = doc.exists && doc.data().nickname ? doc.data().nickname : '飛行員';
-                document.getElementById('userNickname').textContent = nick;
-                document.getElementById('nicknameInput').value = nick;
+            document.querySelector('.no-capture').style.display = 'none';
+            const canvas = await html2canvas(captureArea, {
+                backgroundColor: "#000000",
+                scale: 2
             });
+            document.querySelector('.no-capture').style.display = 'block';
+
+            const link = document.createElement('a');
+            link.download = 'my-stats.png';
+            link.href = canvas.toDataURL();
+            link.click();
+
+            shareBtn.innerText = "一鍵分享你的戰績 📸";
+            shareMsg.innerText = "連結已複製，截圖已下載！";
+            shareMsg.style.display = 'block';
+        } catch (err) {
+            alert('分享失敗，請手動截圖');
+            shareBtn.innerText = "一鍵分享你的戰績 📸";
         }
+    }
+</script>
 
-        // 更新暱稱
-        document.getElementById('updateNicknameBtn').onclick = () => {
-            const nick = document.getElementById('nicknameInput').value.trim() || '匿名飛行員';
-            db.collection('users').doc(auth.currentUser.uid).set({nickname: nick}, {merge: true})
-                .then(() => {
-                    document.getElementById('userNickname').textContent = nick;
-                    alert('暱稱更新成功！');
-                });
-        };
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { 
+        getFirestore, collection, addDoc, query, orderBy, limit, getDocs, Timestamp, where 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // 記錄飛行
-        document.getElementById('addRecordBtn').onclick = () => {
-            const date = document.getElementById('recordDate').value;
-            const hour = document.getElementById('recordHour').value;
-            if (!date) return alert('請選日期');
-            const month = date.substring(0,7); // YYYY-MM
+    // 【請替換下方為你的 Firebase 配置】
+    const firebaseConfig = {
+      apiKey: "AIzaSyDub01y9nvtEKGrVg6DWLYVwVlBs2YFgxs",
+      authDomain: "diy-daily-record.firebaseapp.com",
+      projectId: "diy-daily-record",
+      storageBucket: "diy-daily-record.firebasestorage.app",
+      messagingSenderId: "1030894380378",
+      appId: "1:1030894380378:web:16b1ce08b6a4e51f1e3f63",
+      measurementId: "G-NPT3TLF0PK"
+    };
 
-            db.collection('records').add({
-                uid: auth.currentUser.uid,
-                date: date,
-                month: month,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => {
-                alert('已記錄本次飛行 ✈️');
-                loadLeaderboard();
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 取得當前月份的第一天 (用於過濾本月排行榜)
+    const getStartOfMonth = () => {
+        const now = new Date();
+        return new Date(now.getFullYear(), now.getMonth(), 1);
+    };
+
+    // 渲染個人本地歷史 (保留 LocalStorage 方便快速查看)
+    function renderLocalHistory() {
+        const records = JSON.parse(localStorage.getItem('wank_records') || '[]');
+        const list = document.getElementById('history-list');
+        const section = document.getElementById('history-section');
+        
+        if (records.length > 0) {
+            section.style.display = 'block';
+            list.innerHTML = records.sort((a,b) => new Date(b.time) - new Date(a.time))
+                .slice(0, 10) // 只顯示最近10筆
+                .map(rec => {
+                    const dateObj = new Date(rec.time);
+                    const dateStr = `${dateObj.getMonth()+1}/${dateObj.getDate()} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}`;
+                    return `<li class="history-item"><span>${dateStr}</span><span style="color:#666">已同步</span></li>`;
+                }).join('');
+        }
+    }
+
+    // 核心功能：新增紀錄到 Firebase
+    window.addRecord = async function() {
+        const nicknameInput = document.getElementById('nickname');
+        const timeInput = document.getElementById('record-time');
+        const nickname = nicknameInput.value.trim();
+        const time = timeInput.value;
+
+        if (!nickname) return alert('請輸入暱稱！');
+        if (!time) return alert('請選擇時間！');
+
+        try {
+            // 1. 存到 Firebase
+            await addDoc(collection(db, "records"), {
+                nickname: nickname,
+                time: Timestamp.fromDate(new Date(time)),
+                createdAt: Timestamp.now()
             });
-        };
 
-        // 載入排行榜
-        function loadLeaderboard() {
-            const now = new Date();
-            const currentMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+            // 2. 存到本地緩存
+            const localRecords = JSON.parse(localStorage.getItem('wank_records') || '[]');
+            localRecords.push({ time: time });
+            localStorage.setItem('wank_records', JSON.stringify(localRecords));
+            localStorage.setItem('wank_nickname', nickname);
 
-            db.collection('records').where('month', '==', currentMonth).get()
-                .then(snapshot => {
-                    const counts = {};
-                    snapshot.forEach(doc => {
-                        const uid = doc.data().uid;
-                        counts[uid] = (counts[uid] || 0) + 1;
-                    });
-
-                    const promises = Object.keys(counts).map(uid =>
-                        db.collection('users').doc(uid).get().then(doc => ({
-                            uid,
-                            count: counts[uid],
-                            nickname: doc.exists && doc.data().nickname || '匿名飛行員'
-                        }))
-                    );
-
-                    Promise.all(promises).then(entries => {
-                        entries.sort((a,b) => b.count - a.count);
-                        const tbody = document.getElementById('leaderboardBody');
-                        tbody.innerHTML = '';
-                        entries.slice(0,50).forEach((e, i) => {
-                            tbody.innerHTML += `<tr><td>${i+1}</td><td>${e.nickname}</td><td>${e.count}</td></tr>`;
-                        });
-                        document.getElementById('leaderboardLoading').classList.add('d-none');
-                        document.getElementById('leaderboardTable').classList.remove('d-none');
-                    });
-                });
+            alert('紀錄成功！已同步至全球排行榜。');
+            renderLocalHistory();
+            loadLeaderboard();
+        } catch (e) {
+            console.error(e);
+            alert('同步失敗，請檢查網路或 Firebase 規則。');
         }
+    };
 
-        // 登出
-        document.getElementById('logoutBtn').onclick = () => auth.signOut();
-    </script>
+    // 核心功能：讀取真實排行榜
+    window.loadLeaderboard = async function() {
+        const list = document.getElementById('rank-list');
+        list.innerHTML = '<li class="rank-item" style="justify-content:center">載入中...</li>';
+
+        try {
+            // 查詢本月的所有紀錄
+            const startOfMonth = getStartOfMonth();
+            const q = query(
+                collection(db, "records"), 
+                where("time", ">=", Timestamp.fromDate(startOfMonth))
+            );
+
+            const querySnapshot = await getDocs(q);
+            const stats = {};
+
+            // 統計各暱稱次數
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                stats[data.nickname] = (stats[data.nickname] || 0) + 1;
+            });
+
+            // 排序並取前30
+            const sorted = Object.entries(stats)
+                .map(([name, count]) => ({ name, count }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 30);
+
+            const myName = localStorage.getItem('wank_nickname');
+
+            list.innerHTML = sorted.map((user, index) => {
+                const isMe = user.name === myName;
+                const highlight = isMe ? 'border-bottom: 1px solid white;' : '';
+                const isTop3 = index < 3 ? 'top-3' : '';
+                return `
+                    <li class="rank-item">
+                        <span style="${highlight}">
+                            <span class="rank-badge ${isTop3}">#${index + 1}</span>
+                            ${user.name} ${isMe ? '(你)' : ''}  
+                        </span>
+                        <span>${user.count} 次</span>
+                    </li>
+                `;
+            }).join('');
+            
+            if(sorted.length === 0) list.innerHTML = '<li class="rank-item" style="justify-content:center; color:#444">本月尚無戰績</li>';  
+
+        } catch (e) {
+            console.error(e);
+            list.innerHTML = '<li class="rank-item" style="justify-content:center; color:red">排行榜加載失敗</li>';
+        }
+    };
+
+    // 初始化頁面
+    window.addEventListener('DOMContentLoaded', () => {
+        initTime();
+        const savedName = localStorage.getItem('wank_nickname');
+        if (savedName) document.getElementById('nickname').value = savedName;
+        
+        renderLocalHistory();
+        loadLeaderboard();
+    });
+</script>
 </body>
 </html>
