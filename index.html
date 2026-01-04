@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>打飛機日常紀錄 - 來一發？</title>
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="日常紀錄">
+    <title>打飛機日常紀錄 - 今天來一發？</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192.png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
@@ -184,6 +190,29 @@
             line-height: 1.5;
         }
 
+        .footer-link {
+            color: #666;
+            text-decoration: underline;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .footer-link:hover {
+            color: #fff;
+        }
+
+        .footer-x-link {
+            transition: opacity 0.3s;
+        }
+
+        .footer-x-link:hover {
+            opacity: 0.7;
+        }
+
+        .footer-x-link:hover .footer-x-icon path {
+            fill: #fff;
+        }
+
         /* 截圖時隱藏不需要的元素 */
         .no-capture {
             display: block;
@@ -313,7 +342,7 @@
             <div class="section-title">記下你的每一次</div>
             <div class="form-group">
                 <label>你的暱稱</label>
-                <input type="text" id="nickname" placeholder="輸入你的稱號...">
+                <input type="text" id="nickname" placeholder="輸入你的暱稱...">
             </div>
             <div class="form-group">
                 <label>時間</label>
@@ -329,7 +358,7 @@
         </div>
 
         <div class="section-box">
-            <div class="section-title">本月尻槍王 (Top 30)</div>
+            <div class="section-title">本月打槍王 (Top 30)</div>
             <ul class="rank-list" id="rank-list">
                 <li class="rank-item" style="justify-content: center; color: #444;">載入中...</li>
             </ul>
@@ -341,32 +370,55 @@
         </div>
     </div>
 
-    <div style="text-align: center;">
-        <button class="about-btn" onclick="openAbout()">關於</button>
-    </div>
-
-    <!-- X按鈕 -->
-    <div class="x-button-container">
-        <a href="https://x.com/77seven31077" target="_blank" rel="noopener noreferrer" class="x-button">
-            <svg class="x-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- 實心對角線（左上到右下）- 使用旋轉的矩形 -->
-                <rect x="10" y="0" width="4" height="24" transform="rotate(45 12 12)" fill="white"/>
-                <!-- 空心對角線（右上到左下）- 使用帶有stroke的path創建空心效果 -->
-                <path d="M 2 2 L 20 22 M 20 2 L 2 22" stroke="white" stroke-width="2" stroke-linecap="square" fill="none"/>
-            </svg>
-        </a>
-    </div>
-
     <footer class="footer">
-        免責聲明：此網站僅用於個人追蹤，只有娛樂價值，不提供其他額外服務。請適度操作，注意身體健康。
+        <div style="margin-bottom: 15px;">
+            <span style="color: #444;">@ 2025 打飛機  ｜  </span>
+            <a href="https://x.com/77seven31077" target="_blank" rel="noopener noreferrer" class="footer-x-link" style="display: inline-block; vertical-align: middle;">
+                <svg class="footer-x-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 1rem; height: 1rem;">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" fill="#444"/>
+                </svg>
+            </a>
+        </div>
+        使用此網站即表示您同意<a href="#" onclick="openTerms(); return false;" class="footer-link">服務條款</a>並已閱讀<a href="#" onclick="openPrivacy(); return false;" class="footer-link">隱私政策</a>
     </footer>
 
-    <!-- 關於模態框 -->
-    <div id="aboutModal" class="modal">
+    <!-- 服務條款模態框 -->
+    <div id="termsModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <span class="close" onclick="closeAbout()">&times;</span>
-                <h3>關於此網站</h3>
+                <span class="close" onclick="closeTerms()">&times;</span>
+                <h3>服務條款</h3>
+            </div>
+            <div class="modal-body">
+                <p>歡迎使用本網站。使用本網站即表示您同意遵守以下服務條款：</p>
+                
+                <p><strong>1. 服務說明</strong></p>
+                <p>本網站提供個人追蹤記錄服務，僅供個人使用及娛樂目的。</p>
+                
+                <p><strong>2. 使用者責任</strong></p>
+                <p>使用者應確保所提供資訊的真實性，並對其使用本網站的行為負責。請適度使用，注意身體健康。</p>
+                
+                <p><strong>3. 隱私保護</strong></p>
+                <p>我們重視您的隱私，相關隱私政策請參閱「隱私政策」頁面。</p>
+                
+                <p><strong>4. 免責聲明</strong></p>
+                <p>本網站僅用於個人追蹤，只有娛樂價值，不提供其他額外服務。網站不對使用者的任何行為或後果負責。</p>
+                
+                <p><strong>5. 服務變更</strong></p>
+                <p>我們保留隨時修改或終止服務的權利，恕不另行通知。</p>
+                
+                <p><strong>6. 條款修改</strong></p>
+                <p>我們保留隨時修改本服務條款的權利，修改後的條款將在網站上公布。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 隱私政策模態框 -->
+    <div id="privacyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closePrivacy()">&times;</span>
+                <h3>隱私政策</h3>
             </div>
             <div class="modal-body">
                 <p>目前這個時代，"打飛機" 被歸納為是一個很 "低級" 的詞彙。甚至戀愛、約炮和嫖娼都比打飛機顯得要 "高級"，經常打飛機的人還會被貼上 "Loser" 的標籤。</p>
@@ -386,28 +438,87 @@
         </div>
     </div>
 
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
-    // 開啟關於模態框
-    window.openAbout = function() {
-        document.getElementById('aboutModal').style.display = 'block';
+        // 多語言翻譯對象
+    // 繁體中文文本常量
+    const texts = {
+        // 繁體中文文本
+            'title': '打飛機日常紀錄',
+            'subtitle': '今天來一發？',
+            'record-title': '記下你的每一次',
+            'nickname-label': '你的暱稱',
+            'nickname-placeholder': '輸入你的暱稱...',
+            'time-label': '時間',
+            'confirm-btn': '確認紀錄',
+            'history-title': '你的近期戰績',
+            'rank-title': '本月打槍王 (Top 30)',
+            'loading': '載入中...',
+            'share-btn': '分享你的戰績 📸',
+            'share-success': '截圖已生成，連結已複製！',
+            'about-btn': '關於',
+            'disclaimer': '免責聲明：此網站僅用於個人追蹤，只有娛樂價值，不提供其他額外服務。請適度操作，注意身體健康。',
+            'about-title': '關於此網站',
+            'about-p1': '目前這個時代，"打飛機" 被歸納為是一個很 "低級" 的詞彙。甚至戀愛、約炮和嫖娼都比打飛機顯得要 "高級"，經常打飛機的人還會被貼上 "Loser" 的標籤。',
+            'about-p2': '但是打飛機其實是解決性慾成本最低的方式。',
+            'about-p3': '你不打飛機，你就得通過戀愛、約炮、或者嫖娼去解決你的性慾，但是這三者無論是從時間、精神、或金錢層面去看，成本都遠遠高於打飛機。所以，打飛機實際上是在以最高效的方式來解決自己的性慾。',
+            'about-p4': '"自己自足" 在任何領域都屬於 "高級" 的詞彙，但是到了 "解決性慾" 這件事情上，自給自足反而成了一個 "低級" 詞彙。所以我覺得，目前這個時代，世人對於 "打飛機" 這件事情有著嚴重的價值錯判。',
+            'about-p5': 'AI 帶來的信息爆炸時代開始逐漸把 "效率主義" 推向主流，而 "打飛機" 這個在 "解決性慾" 領域中最有 "效率" 的解決方案可能會被大家重新正視和定位。',
+            'about-p6': '未來會有越來越多的人選擇打飛機，整個世界會迎來一次屬於打飛機的大牛市，進入全民打飛機的時代。到時候你跟別人說你打飛機，別人會覺得你很時尚，你很高級。',
+            'no-records': '本月尚無戰績',
+            'load-failed': '排行榜加載失敗',
+            'synced': '已同步',
+            'times': '次',
+            'you': '(你)',
+            'alert-nickname': '請輸入暱稱！',
+            'alert-time': '請選擇時間！',
+            'alert-success': '紀錄成功！要注意身體喔。',
+            'alert-sync-failed': '同步失敗，請檢查網路或 Firebase 規則。',
+            'share-failed': '分享失敗，請手動截圖'
+        };
+
+    // 當前語言
+    
+    // 將語言相關變數暴露到全局，供模塊腳本使用
+    window.texts = texts;
+
+
+    // 更新頁面語言
+
+    // 開啟服務條款模態框
+    window.openTerms = function() {
+        document.getElementById('termsModal').style.display = 'block';
     }
 
-    // 關閉關於模態框
-    window.closeAbout = function() {
-        document.getElementById('aboutModal').style.display = 'none';
+    // 關閉服務條款模態框
+    window.closeTerms = function() {
+        document.getElementById('termsModal').style.display = 'none';
+    }
+
+    // 開啟隱私政策模態框
+    window.openPrivacy = function() {
+        document.getElementById('privacyModal').style.display = 'block';
+    }
+
+    // 關閉隱私政策模態框
+    window.closePrivacy = function() {
+        document.getElementById('privacyModal').style.display = 'none';
     }
 
     // 點擊模態框外部關閉
     window.onclick = function(event) {
-        const modal = document.getElementById('aboutModal');
-        if (event.target == modal) {
-            modal.style.display = 'none';
+        const termsModal = document.getElementById('termsModal');
+        const privacyModal = document.getElementById('privacyModal');
+        if (event.target == termsModal) {
+            termsModal.style.display = 'none';
+        }
+        if (event.target == privacyModal) {
+            privacyModal.style.display = 'none';
         }
     }
 
-    // 初始化時間輸入框
+
+
     function initTime() {
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -432,9 +543,10 @@
             });
             document.querySelector('.no-capture').style.display = 'block';
 
+            const jpgDataUrl = canvas.toDataURL("image/jpeg", 0.9);
             const link = document.createElement('a');
-            link.download = 'my-stats.png';
-            link.href = canvas.toDataURL();
+            link.download = `my-stats-${Date.now()}.jpg`;
+            link.href = jpgDataUrl;
             link.click();
 
             shareBtn.innerText = "一鍵分享你的戰績 📸";
@@ -485,7 +597,7 @@
                 .slice(0, 10) // 只顯示最近10筆
                 .map(rec => {
                     const dateObj = new Date(rec.time);
-                    const dateStr = `${dateObj.getMonth()+1}/${dateObj.getDate()} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}`;
+                    const dateStr = `${dateObj.getFullYear()}/${String(dateObj.getMonth()+1).padStart(2,'0')}/${String(dateObj.getDate()).padStart(2,'0')} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}`;
                     return `<li class="history-item"><span>${dateStr}</span><span style="color:#666">已同步</span></li>`;
                 }).join('');
         }
@@ -497,9 +609,10 @@
         const timeInput = document.getElementById('record-time');
         const nickname = nicknameInput.value.trim();
         const time = timeInput.value;
+        const t = window.texts || {};
 
-        if (!nickname) return alert('請輸入暱稱！');
-        if (!time) return alert('請選擇時間！');
+        if (!nickname) return alert(t['alert-nickname']);
+        if (!time) return alert(t['alert-time']);
 
         try {
             // 1. 存到 Firebase
@@ -515,65 +628,94 @@
             localStorage.setItem('wank_records', JSON.stringify(localRecords));
             localStorage.setItem('wank_nickname', nickname);
 
-            alert('紀錄成功！已同步至全球排行榜。');
+            alert(t['alert-success']);
             renderLocalHistory();
-            loadLeaderboard();
+            // 等待loadLeaderboard函數可用
+            let waitCount = 0;
+            const checkLoadLeaderboard = setInterval(() => {
+                waitCount++;
+                if (typeof window.loadLeaderboard === 'function') {
+                    clearInterval(checkLoadLeaderboard);
+                    window.loadLeaderboard();
+                } else if (waitCount > 50) {
+                    clearInterval(checkLoadLeaderboard);
+                    console.error('loadLeaderboard函數在5秒後仍未定義');
+                }
+            }, 100);
         } catch (e) {
             console.error(e);
-            alert('同步失敗，請檢查網路或 Firebase 規則。');
+            alert(t['alert-sync-failed']);
         }
     };
 
     // 核心功能：讀取真實排行榜
+
     window.loadLeaderboard = async function() {
-        const list = document.getElementById('rank-list');
-        list.innerHTML = '<li class="rank-item" style="justify-content:center">載入中...</li>';
-
+        console.log('loadLeaderboard函數被調用');
+        let t = { loading: '載入中...', you: '(你)', times: '次', 'no-records': '本月尚無戰績', 'load-failed': '排行榜加載失敗' };
         try {
-            // 查詢本月的所有紀錄
-            const startOfMonth = getStartOfMonth();
-            const q = query(
-                collection(db, "records"), 
-                where("time", ">=", Timestamp.fromDate(startOfMonth))
-            );
-
-            const querySnapshot = await getDocs(q);
-            const stats = {};
-
-            // 統計各暱稱次數
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                stats[data.nickname] = (stats[data.nickname] || 0) + 1;
-            });
-
-            // 排序並取前30
-            const sorted = Object.entries(stats)
-                .map(([name, count]) => ({ name, count }))
-                .sort((a, b) => b.count - a.count)
-                .slice(0, 30);
-
-            const myName = localStorage.getItem('wank_nickname');
-
-            list.innerHTML = sorted.map((user, index) => {
-                const isMe = user.name === myName;
-                const highlight = isMe ? 'border-bottom: 1px solid white;' : '';
-                const isTop3 = index < 3 ? 'top-3' : '';
-                return `
-                    <li class="rank-item">
-                        <span style="${highlight}">
-                            <span class="rank-badge ${isTop3}">#${index + 1}</span>
-                            ${user.name} ${isMe ? '(你)' : ''}  
-                        </span>
-                        <span>${user.count} 次</span>
-                    </li>
-                `;
-            }).join('');
+            const list = document.getElementById('rank-list');
+            if (!list) { console.error('找不到rank-list元素！'); return; }
+            list.innerHTML = '<li class="rank-item" style="justify-content:center">載入中...</li>';
             
-            if(sorted.length === 0) list.innerHTML = '<li class="rank-item" style="justify-content:center; color:#444">本月尚無戰績</li>';  
-
-        } catch (e) {
-            console.error(e);
-            list.innerHTML = '<li class="rank-item" style="justify-content:center; color:red">排行榜加載失敗</li>';
+            let maxWait = 20;
+            while (!window.texts && maxWait > 0) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                maxWait--;
+            }
+            
+            if (window.texts) {
+                t = window.texts;
+            }
+            
+            try {
+                const startOfMonth = getStartOfMonth();
+                const q = query(
+                    collection(db, "records"),
+                    where("time", ">=", Timestamp.fromDate(startOfMonth)),
+                    orderBy("time", "desc")
+                );
+                
+                const querySnapshot = await getDocs(q);
+                const stats = {};
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const nickname = data.nickname || '匿名';
+                    stats[nickname] = (stats[nickname] || 0) + 1;
+                });
+                
+                const sorted = Object.entries(stats)
+                    .map(([name, count]) => ({ name, count }))
+                    .sort((a, b) => b.count - a.count)
+                    .slice(0, 30);
+                
+                const myName = localStorage.getItem('wank_nickname');
+                
+                if (sorted.length === 0) {
+                    list.innerHTML = `<li class="rank-item" style="justify-content:center; color:#444">${t['no-records']}</li>`;
+                } else {
+                    list.innerHTML = sorted.map((user, index) => {
+                        const isMe = user.name === myName;
+                        const highlight = isMe ? 'border-bottom: 1px solid white;' : '';
+                        const isTop3 = index < 3 ? 'top-3' : '';
+                        return `<li class="rank-item"><span style="${highlight}"><span class="rank-badge ${isTop3}">#${index + 1}</span>${user.name}${isMe ? (t.you || '(你)') : ''}</span><span>${user.count} ${t.times || '次'}</span></li>`;
+                    }).join('');
+                }
+            } catch (e) {
+                console.error('排行榜加載錯誤:', e);
+                const errorMsg = e.message || e.toString();
+                const errorText = (t && t['load-failed']) ? t['load-failed'] : '排行榜加載失敗';
+                if (list) {
+                    list.innerHTML = `<li class="rank-item" style="justify-content:center; color:red">${errorText}<br><small style="color:#666; font-size:0.7rem;">${errorMsg}</small></li>`;
+                }
+            }
+        } catch (outerError) {
+            console.error('外層錯誤:', outerError);
+            const list = document.getElementById('rank-list');
+            if (list) {
+                list.innerHTML = '<li class="rank-item" style="justify-content:center; color:red">排行榜加載失敗</li>';
+            }
         }
     };
 
@@ -584,8 +726,34 @@
         if (savedName) document.getElementById('nickname').value = savedName;
         
         renderLocalHistory();
-        loadLeaderboard();
+        // 等待loadLeaderboard函數可用
+        let waitCount = 0;
+        const checkLoadLeaderboard = setInterval(() => {
+            waitCount++;
+            if (typeof window.loadLeaderboard === 'function') {
+                clearInterval(checkLoadLeaderboard);
+                window.loadLeaderboard();
+            } else if (waitCount > 50) {
+                clearInterval(checkLoadLeaderboard);
+                console.error('loadLeaderboard函數在5秒後仍未定義');
+            }
+        }, 100);
     });
+</script>
+
+<script>
+    // 註冊 Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+                .then((registration) => {
+                    console.log('Service Worker 註冊成功:', registration.scope);
+                })
+                .catch((error) => {
+                    console.log('Service Worker 註冊失敗:', error);
+                });
+        });
+    }
 </script>
 </body>
 </html>
