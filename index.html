@@ -188,6 +188,117 @@
         .no-capture {
             display: block;
         }
+        /* 關於按鈕 */
+        .about-btn {
+            background: transparent;
+            color: #666;
+            border: 1px solid #333;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        .about-btn:hover {
+            color: #fff;
+            border-color: #666;
+        }
+
+        /* X按鈕樣式 */
+        .x-button-container {
+            text-align: center;
+            margin: 30px 0 20px 0;
+        }
+
+        .x-button {
+            display: inline-block;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            transition: opacity 0.3s;
+        }
+
+        .x-button:hover {
+            opacity: 0.7;
+        }
+
+        .x-icon {
+            width: 1.4rem;
+            height: 1.4rem;
+            display: block;
+            flex-shrink: 0;
+        }
+
+        /* 模態框樣式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .modal-header h3 {
+            color: #fff;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .modal-body {
+            color: #ccc;
+            line-height: 1.8;
+            font-size: 0.9rem;
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .modal-body p {
+            margin-bottom: 15px;
+        }
+
+        .close {
+            color: #666;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 20px;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #fff;
+        }
+
     </style>
 </head>
 <body>
@@ -230,13 +341,72 @@
         </div>
     </div>
 
+    <div style="text-align: center;">
+        <button class="about-btn" onclick="openAbout()">關於</button>
+    </div>
+
+    <!-- X按鈕 -->
+    <div class="x-button-container">
+        <a href="https://x.com/77seven31077" target="_blank" rel="noopener noreferrer" class="x-button">
+            <svg class="x-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- 實心對角線（左上到右下）- 使用旋轉的矩形 -->
+                <rect x="10" y="0" width="4" height="24" transform="rotate(45 12 12)" fill="white"/>
+                <!-- 空心對角線（右上到左下）- 使用帶有stroke的path創建空心效果 -->
+                <path d="M 2 2 L 20 22 M 20 2 L 2 22" stroke="white" stroke-width="2" stroke-linecap="square" fill="none"/>
+            </svg>
+        </a>
+    </div>
+
     <footer class="footer">
         免責聲明：此網站僅用於個人追蹤，只有娛樂價值，不提供其他額外服務。請適度操作，注意身體健康。
     </footer>
 
+    <!-- 關於模態框 -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeAbout()">&times;</span>
+                <h3>關於此網站</h3>
+            </div>
+            <div class="modal-body">
+                <p>目前這個時代，"打飛機" 被歸納為是一個很 "低級" 的詞彙。甚至戀愛、約炮和嫖娼都比打飛機顯得要 "高級"，經常打飛機的人還會被貼上 "Loser" 的標籤。</p>
+                
+                <p>但是打飛機其實是解決性慾成本最低的方式。</p>
+                
+                <p>你不打飛機，你就得通過戀愛、約炮、或者嫖娼去解決你的性慾，但是這三者無論是從時間、精神、或金錢層面去看，成本都遠遠高於打飛機。所以，打飛機實際上是在以最高效的方式來解決自己的性慾。</p>
+                
+                <p>"自己自足" 在任何領域都屬於 "高級" 的詞彙，但是到了 "解決性慾" 這件事情上，自給自足反而成了一個 "低級" 詞彙。所以我覺得，目前這個時代，世人對於 "打飛機" 這件事情有著嚴重的價值錯判。</p>
+                
+                <p>AI 帶來的信息爆炸時代開始逐漸把 "效率主義" 推向主流，而 "打飛機" 這個在 "解決性慾" 領域中最有 "效率" 的解決方案可能會被大家重新正視和定位。</p>
+                
+                <p>未來會有越來越多的人選擇打飛機，整個世界會迎來一次屬於打飛機的大牛市，進入全民打飛機的時代。到時候你跟別人說你打飛機，別人會覺得你很時尚，你很高級。</p>
+                
+                <p style="text-align: right; margin-top: 20px; color: #888;">-殺破狼(X:@wolfyxbt)</p>
+            </div>
+        </div>
+    </div>
+
    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
+    // 開啟關於模態框
+    window.openAbout = function() {
+        document.getElementById('aboutModal').style.display = 'block';
+    }
+
+    // 關閉關於模態框
+    window.closeAbout = function() {
+        document.getElementById('aboutModal').style.display = 'none';
+    }
+
+    // 點擊模態框外部關閉
+    window.onclick = function(event) {
+        const modal = document.getElementById('aboutModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+
     // 初始化時間輸入框
     function initTime() {
         const now = new Date();
