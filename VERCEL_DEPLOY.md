@@ -36,8 +36,14 @@
 在專案設定頁面：
 
 1. **Project Name**：
-   - 輸入：`diy-daily-record`（或任何你喜歡的名稱）
-   - 如果顯示已存在，可以加後綴：`diy-daily-record-v2`
+   - ⚠️ **重要**：Vercel 的專案名稱在帳號內是**全域唯一**的
+   - 即使刪除了舊專案，名稱可能無法立即重用
+   - **建議使用不同的名稱**，例如：
+     - `diy-daily-record-app`
+     - `daily-record-vercel`
+     - `diy-daily-record-v2`
+     - `daily-record-2024`
+   - 或者使用你的 GitHub 用戶名：`77seven-daily-record`
 
 2. **Framework Preset**：
    - 選擇：**Other** 或 **Other (No Framework)**
