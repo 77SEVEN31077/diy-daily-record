@@ -16,12 +16,14 @@ window.loadLeaderboard = async function() {
         list.innerHTML = '<li class="rank-item" style="justify-content:center">載入中...</li>';
         
         let maxWait = 20;
-        while (!window.texts && maxWait > 0) {
+        while (!window.getTexts && !window.texts && maxWait > 0) {
             await new Promise(resolve => setTimeout(resolve, 100));
             maxWait--;
         }
         
-        if (window.texts) {
+        if (window.getTexts) {
+            t = window.getTexts();
+        } else if (window.texts) {
             t = window.texts;
         }
         

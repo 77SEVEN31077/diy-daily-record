@@ -4,7 +4,7 @@ import './firebase.js';
 import './theme.js';
 import './language.js';
 import './auth.js';
-import { initTime, shareStats, texts } from './utils.js';
+import { initTime, shareStats, initLanguage } from './utils.js';
 import { renderLocalHistory } from './records.js';
 import './leaderboard.js';
 
@@ -13,6 +13,9 @@ window.shareStats = shareStats;
 
 // 初始化頁面
 window.addEventListener('DOMContentLoaded', () => {
+    // 初始化語言（必須在其他初始化之前）
+    initLanguage();
+    
     initTime();
     const savedName = localStorage.getItem('wank_nickname');
     if (savedName) document.getElementById('nickname').value = savedName;

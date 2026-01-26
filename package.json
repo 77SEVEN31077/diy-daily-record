@@ -1,7 +1,7 @@
 {
   "name": "diy-daily-record",
   "version": "1.0.0",
-  "description": "打飛機日常紀錄 - 今天來一發？",
+  "description": "打飛機紀錄 - 今天來一發？",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -31,17 +31,19 @@ window.selectLanguage = function(lang) {
         });
     }
     
-    // 保存語言設置
-    localStorage.setItem('language', lang);
-    
-    // 這裡可以實現語言切換邏輯
-    // 目前先顯示提示
-    const langNames = {
-        'zh-TW': '繁體中文',
-        'en': 'English',
-        'zh-CN': '简体中文'
-    };
-    // alert('語言已切換為：' + (langNames[lang] || lang));
+    // 切換語言並更新頁面
+    if (window.setLanguage) {
+        window.setLanguage(lang);
+    } else {
+        // 如果 setLanguage 還沒加載，先保存設置
+        localStorage.setItem('language', lang);
+        // 延遲更新，等待模組加載
+        setTimeout(() => {
+            if (window.setLanguage) {
+                window.setLanguage(lang);
+            }
+        }, 100);
+    }
 };
 
 // 點擊外部關閉下拉菜單

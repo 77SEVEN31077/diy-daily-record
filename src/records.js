@@ -24,7 +24,7 @@ window.addRecord = async function() {
     const timeInput = document.getElementById('record-time');
     const nickname = nicknameInput.value.trim();
     const time = timeInput.value;
-    const t = window.texts || {};
+    const t = window.getTexts ? window.getTexts() : (window.texts || {});
 
     if (!nickname) return alert(t['alert-nickname'] || '請輸入暱稱！');
     if (!time) return alert(t['alert-time'] || '請選擇時間！');
