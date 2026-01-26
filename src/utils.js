@@ -131,7 +131,7 @@ export const translations = {
         'footer-and': '並已閱讀'
     },
     'en': {
-        'title': 'Daily Record',
+        'title': 'DIY Record',
         'subtitle': 'Ready for today?',
         'record-title': 'Record Your Every Time',
         'nickname-label': 'Your Nickname',
