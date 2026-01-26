@@ -128,7 +128,23 @@ export const translations = {
         'signup-link': '立即註冊',
         'login-link': '立即登入',
         'footer-agreement': '使用此網站即表示您同意',
-        'footer-and': '並已閱讀'
+        'footer-and': '並已閱讀',
+        'synced': '已同步',
+        'logging-in': '登入中...',
+        'signing-up': '註冊中...',
+        'login-success': '登入成功！',
+        'signup-success': '註冊成功！歡迎使用！',
+        'logout-success': '已成功登出！',
+        'logout-failed': '登出失敗：',
+        'error-user-not-found': '找不到此帳號，請先註冊。',
+        'error-wrong-password': '密碼錯誤，請重新輸入。',
+        'error-invalid-email': '電子郵件格式不正確。',
+        'error-login-failed': '登入失敗：',
+        'error-password-mismatch': '兩次輸入的密碼不一致，請重新輸入。',
+        'error-password-too-short': '密碼長度至少需要6個字元。',
+        'error-email-in-use': '此電子郵件已被使用，請直接登入。',
+        'error-weak-password': '密碼強度不足，請使用更複雜的密碼。',
+        'error-signup-failed': '註冊失敗：'
     },
     'en': {
         'title': 'DIY Record',
@@ -174,7 +190,23 @@ export const translations = {
         'signup-link': 'Sign up now',
         'login-link': 'Sign in now',
         'footer-agreement': 'By using this website, you agree to',
-        'footer-and': 'and have read'
+        'footer-and': 'and have read',
+        'synced': 'Synced',
+        'logging-in': 'Signing in...',
+        'signing-up': 'Signing up...',
+        'login-success': 'Sign in successful!',
+        'signup-success': 'Sign up successful! Welcome!',
+        'logout-success': 'Signed out successfully!',
+        'logout-failed': 'Sign out failed: ',
+        'error-user-not-found': 'Account not found, please sign up first.',
+        'error-wrong-password': 'Wrong password, please try again.',
+        'error-invalid-email': 'Invalid email format.',
+        'error-login-failed': 'Sign in failed: ',
+        'error-password-mismatch': 'Passwords do not match, please try again.',
+        'error-password-too-short': 'Password must be at least 6 characters.',
+        'error-email-in-use': 'This email is already in use, please sign in.',
+        'error-weak-password': 'Password is too weak, please use a stronger password.',
+        'error-signup-failed': 'Sign up failed: '
     },
     'zh-CN': {
         'title': '打飞机记录',
@@ -220,7 +252,23 @@ export const translations = {
         'signup-link': '立即注册',
         'login-link': '立即登录',
         'footer-agreement': '使用此网站即表示您同意',
-        'footer-and': '并已阅读'
+        'footer-and': '并已阅读',
+        'synced': '已同步',
+        'logging-in': '登录中...',
+        'signing-up': '注册中...',
+        'login-success': '登录成功！',
+        'signup-success': '注册成功！欢迎使用！',
+        'logout-success': '已成功登出！',
+        'logout-failed': '登出失败：',
+        'error-user-not-found': '找不到此账号，请先注册。',
+        'error-wrong-password': '密码错误，请重新输入。',
+        'error-invalid-email': '电子邮件格式不正确。',
+        'error-login-failed': '登录失败：',
+        'error-password-mismatch': '两次输入的密码不一致，请重新输入。',
+        'error-password-too-short': '密码长度至少需要6个字符。',
+        'error-email-in-use': '此电子邮件已被使用，请直接登录。',
+        'error-weak-password': '密码强度不足，请使用更复杂的密码。',
+        'error-signup-failed': '注册失败：'
     }
 };
 
@@ -254,8 +302,14 @@ function updatePageTexts() {
     const texts = getTexts();
     const html = document.documentElement;
     
-    // 更新 HTML lang 屬性
+    // 更新 HTML lang 屬性（影響日曆等原生控件）
     html.setAttribute('lang', currentLanguage);
+    
+    // 更新 datetime-local 輸入框的語言（通過設置 lang 屬性）
+    const timeInput = document.getElementById('record-time');
+    if (timeInput) {
+        timeInput.setAttribute('lang', currentLanguage);
+    }
     
     // 更新標題
     const titleElement = document.querySelector('title');
@@ -452,6 +506,37 @@ function updatePageTexts() {
             themeItems[1].textContent = '深色模式';
             themeItems[2].textContent = '系統設定';
         }
+    }
+    
+    // 更新登入/註冊模態框中的連結文字
+    const loginModalLinks = document.querySelectorAll('#loginModal a');
+    loginModalLinks.forEach(link => {
+        if (link.textContent.includes('還沒有帳號') || link.textContent.includes("Don't have")) {
+            const parent = link.parentElement;
+            if (parent) {
+                parent.innerHTML = `${texts['no-account']} <a href="#" onclick="closeLogin(); openSignup(); return false;" style="color: var(--highlight); text-decoration: underline;">${texts['signup-link']}</a>`;
+            }
+        }
+    });
+    
+    const signupModalLinks = document.querySelectorAll('#signupModal a');
+    signupModalLinks.forEach(link => {
+        if (link.textContent.includes('已有帳號') || link.textContent.includes('Already have')) {
+            const parent = link.parentElement;
+            if (parent) {
+                parent.innerHTML = `${texts['has-account']} <a href="#" onclick="closeSignup(); openLogin(); return false;" style="color: var(--highlight); text-decoration: underline;">${texts['login-link']}</a>`;
+            }
+        }
+    });
+    
+    // 重新渲染歷史記錄以更新"已同步"文字
+    if (typeof window.renderLocalHistory === 'function') {
+        window.renderLocalHistory();
+    }
+    
+    // 重新載入排行榜以更新文字
+    if (typeof window.loadLeaderboard === 'function') {
+        window.loadLeaderboard();
     }
 }
 

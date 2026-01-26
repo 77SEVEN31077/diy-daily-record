@@ -6,13 +6,28 @@ const getStartOfMonth = () => {
     return new Date(now.getFullYear(), now.getMonth(), 1);
 };
 
+// 防止重複加載的標誌
+let isLoadingLeaderboard = false;
+
 // 核心功能：讀取真實排行榜
 window.loadLeaderboard = async function() {
+    // 防止重複調用
+    if (isLoadingLeaderboard) {
+        console.log('loadLeaderboard 正在加載中，跳過重複調用');
+        return;
+    }
+    
     console.log('loadLeaderboard函數被調用');
+    isLoadingLeaderboard = true;
+    
     let t = { loading: '載入中...', you: '(你)', times: '次', 'no-records': '本月尚無戰績', 'load-failed': '排行榜加載失敗' };
     try {
         const list = document.getElementById('rank-list');
-        if (!list) { console.error('找不到rank-list元素！'); return; }
+        if (!list) { 
+            console.error('找不到rank-list元素！'); 
+            isLoadingLeaderboard = false;
+            return; 
+        }
         list.innerHTML = '<li class="rank-item" style="justify-content:center">載入中...</li>';
         
         let maxWait = 20;
@@ -75,5 +90,7 @@ window.loadLeaderboard = async function() {
         if (list) {
             list.innerHTML = '<li class="rank-item" style="justify-content:center; color:red">排行榜加載失敗</li>';
         }
+    } finally {
+        isLoadingLeaderboard = false;
     }
 };

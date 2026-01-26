@@ -6,6 +6,10 @@ export function renderLocalHistory() {
     const list = document.getElementById('history-list');
     const section = document.getElementById('history-section');
     
+    // 獲取當前語言的翻譯
+    const texts = window.getTexts ? window.getTexts() : { 'synced': '已同步' };
+    const syncedText = texts['synced'] || '已同步';
+    
     if (records.length > 0) {
         section.style.display = 'block';
         list.innerHTML = records.sort((a,b) => new Date(b.time) - new Date(a.time))
@@ -13,10 +17,13 @@ export function renderLocalHistory() {
             .map(rec => {
                 const dateObj = new Date(rec.time);
                 const dateStr = `${dateObj.getFullYear()}/${String(dateObj.getMonth()+1).padStart(2,'0')}/${String(dateObj.getDate()).padStart(2,'0')} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}`;
-                return `<li class="history-item"><span>${dateStr}</span><span style="color:#666">已同步</span></li>`;
+                return `<li class="history-item"><span>${dateStr}</span><span style="color:#666">${syncedText}</span></li>`;
             }).join('');
     }
 }
+
+// 暴露到全局以便語言切換時調用
+window.renderLocalHistory = renderLocalHistory;
 
 // 核心功能：新增紀錄到 Firebase
 window.addRecord = async function() {
