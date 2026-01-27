@@ -1,6 +1,8 @@
 // 語言切換下拉菜單
 window.toggleLanguageDropdown = function(event) {
-    event.stopPropagation();
+    if (event) {
+        event.stopPropagation();
+    }
     const dropdown = document.getElementById('language-dropdown');
     const themeDropdown = document.getElementById('theme-dropdown');
     const btn = document.getElementById('language-toggle-btn');
@@ -17,6 +19,8 @@ window.toggleLanguageDropdown = function(event) {
 
 // 選擇語言
 window.selectLanguage = function(lang) {
+    console.log('[Language] selectLanguage called with:', lang);
+    
     const dropdown = document.getElementById('language-dropdown');
     if (dropdown) {
         dropdown.classList.remove('show');
@@ -31,28 +35,49 @@ window.selectLanguage = function(lang) {
         });
     }
     
+    // 保存語言設置
+    localStorage.setItem('language', lang);
+    
     // 切換語言並更新頁面
-    if (window.setLanguage) {
-        window.setLanguage(lang);
-    } else {
-        // 如果 setLanguage 還沒加載，先保存設置
-        localStorage.setItem('language', lang);
-        // 延遲更新，等待模組加載
-        setTimeout(() => {
-            if (window.setLanguage) {
-                window.setLanguage(lang);
-            }
-        }, 100);
-    }
+    const trySetLanguage = () => {
+        if (window.setLanguage && typeof window.setLanguage === 'function') {
+            console.log('[Language] Calling setLanguage');
+            window.setLanguage(lang);
+        } else {
+            console.log('[Language] setLanguage not available, retrying...');
+            // 如果 setLanguage 還沒加載，延遲重試
+            setTimeout(() => {
+                if (window.setLanguage && typeof window.setLanguage === 'function') {
+                    window.setLanguage(lang);
+                } else {
+                    // 如果還是沒有，強制重新載入頁面以應用語言
+                    console.warn('[Language] setLanguage still not available, reloading page');
+                    window.location.reload();
+                }
+            }, 200);
+        }
+    };
+    
+    trySetLanguage();
 };
 
-// 點擊外部關閉下拉菜單
-document.addEventListener('click', function(event) {
-    const languageDropdown = document.getElementById('language-dropdown');
-    const languageBtn = document.getElementById('language-toggle-btn');
-    
-    if (languageDropdown && languageBtn && !languageBtn.contains(event.target) && !languageDropdown.contains(event.target)) {
-        languageDropdown.classList.remove('show');
-        languageBtn.setAttribute('aria-expanded', 'false');
-    }
-});
+// 點擊外部關閉下拉菜單 - 確保在 DOM 準備好後才添加監聽器
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        setupLanguageDropdownClose();
+    });
+} else {
+    setupLanguageDropdownClose();
+}
+
+function setupLanguageDropdownClose() {
+    document.addEventListener('click', function(event) {
+        const languageDropdown = document.getElementById('language-dropdown');
+        const languageBtn = document.getElementById('language-toggle-btn');
+        
+        if (languageDropdown && languageBtn && !languageBtn.contains(event.target) && !languageDropdown.contains(event.target)) {
+            languageDropdown.classList.remove('show');
+            languageBtn.setAttribute('aria-expanded', 'false');
+        }
+    });
+}

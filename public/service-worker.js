@@ -1,4 +1,4 @@
-const CACHE_NAME = 'daily-record-v3';
+const CACHE_NAME = 'daily-record-v4';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -29,6 +29,51 @@ self.addEventListener('install', (event) => {
 
 // 攔截請求並返回快取的內容
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+  
+  // JavaScript 和 CSS 文件使用網絡優先策略，確保更新及時
+  if (url.pathname.includes('/assets/') && (url.pathname.endsWith('.js') || url.pathname.endsWith('.css'))) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // 如果網絡請求成功，更新緩存
+          if (response && response.status === 200) {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          // 網絡失敗時，嘗試從緩存獲取
+          return caches.match(event.request);
+        })
+    );
+    return;
+  }
+  
+  // HTML 文件使用網絡優先策略
+  if (url.pathname === '/' || url.pathname === '/index.html') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200) {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          return caches.match(event.request) || caches.match('/index.html');
+        })
+    );
+    return;
+  }
+  
+  // 其他資源使用緩存優先策略
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
