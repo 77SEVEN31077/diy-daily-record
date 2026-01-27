@@ -5,7 +5,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import {
     getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-    signOut, onAuthStateChanged
+    signOut, onAuthStateChanged, sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 // Firebase 配置
@@ -23,4 +23,4 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
-export { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, Timestamp, collection, addDoc, query, orderBy, getDocs, where, deleteDoc, doc, limit, startAfter, getDoc };
+export { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, Timestamp, collection, addDoc, query, orderBy, getDocs, where, deleteDoc, doc, limit, startAfter, getDoc };

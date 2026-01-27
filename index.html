@@ -272,6 +272,34 @@
                 <p style="text-align: center; margin-top: 15px; font-size: 0.9rem; color: var(--text-muted);">
                     還沒有帳號？ <a href="#" onclick="closeLogin(); openSignup(); return false;" style="color: var(--highlight); text-decoration: underline;">立即註冊</a>
                 </p>
+                <p style="text-align: center; margin-top: 10px; font-size: 0.85rem;">
+                    <a href="#" onclick="closeLogin(); openForgotPassword(); return false;" style="color: var(--text-muted); text-decoration: underline;">忘記密碼？</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 忘記密碼模態框 -->
+    <div id="forgotPasswordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeForgotPassword()">&times;</span>
+                <h3>忘記密碼</h3>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 15px; color: var(--text-muted); font-size: 0.9rem;">請輸入您的電子郵件地址，我們將發送密碼重設連結給您。</p>
+                <form id="forgotPasswordForm" onsubmit="handleForgotPassword(event); return false;">
+                    <div class="form-group">
+                        <label for="forgotPasswordEmail">電子郵件</label>
+                        <input type="email" id="forgotPasswordEmail" required placeholder="請輸入您的電子郵件">
+                    </div>
+                    <div id="forgotPasswordError" style="color: #ff4444; font-size: 0.9rem; margin-bottom: 15px; display: none;"></div>
+                    <div id="forgotPasswordSuccess" style="color: #44ff44; font-size: 0.9rem; margin-bottom: 15px; display: none;"></div>
+                    <button type="submit" class="btn" id="forgotPasswordBtn">發送重設連結</button>
+                </form>
+                <p style="text-align: center; margin-top: 15px; font-size: 0.9rem; color: var(--text-muted);">
+                    <a href="#" onclick="closeForgotPassword(); openLogin(); return false;" style="color: var(--highlight); text-decoration: underline;">返回登入</a>
+                </p>
             </div>
         </div>
     </div>

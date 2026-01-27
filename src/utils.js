@@ -138,6 +138,10 @@ window.onclick = function(event) {
     if (event.target == signupModal) {
         signupModal.style.display = 'none';
     }
+    const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+    if (event.target == forgotPasswordModal) {
+        forgotPasswordModal.style.display = 'none';
+    }
 };
 
 // 多語言翻譯對象
@@ -219,6 +223,15 @@ export const translations = {
         'time-just-now': '剛剛',
         'time-minutes-ago': '分鐘前',
         'time-yesterday': '昨天',
+        'forgot-password': '忘記密碼？',
+        'forgot-password-title': '忘記密碼',
+        'forgot-password-description': '請輸入您的電子郵件地址，我們將發送密碼重設連結給您。',
+        'forgot-password-submit': '發送重設連結',
+        'sending': '發送中...',
+        'reset-email-sent': '密碼重設連結已發送到您的電子郵件，請檢查您的收件箱。',
+        'reset-email-failed': '發送失敗：',
+        'error-too-many-requests': '請求過於頻繁，請稍後再試。',
+        'back-to-login': '返回登入',
         'terms-welcome': '歡迎使用本網站。使用本網站即表示您同意遵守以下服務條款：',
         'terms-1-title': '1. 服務說明',
         'terms-1-content': '本網站提供個人追蹤記錄服務，僅供個人使用及娛樂目的。',
@@ -320,6 +333,15 @@ export const translations = {
         'time-just-now': 'Just now',
         'time-minutes-ago': ' minutes ago',
         'time-yesterday': 'Yesterday',
+        'forgot-password': 'Forgot password?',
+        'forgot-password-title': 'Forgot Password',
+        'forgot-password-description': 'Please enter your email address, and we will send you a password reset link.',
+        'forgot-password-submit': 'Send Reset Link',
+        'sending': 'Sending...',
+        'reset-email-sent': 'Password reset link has been sent to your email. Please check your inbox.',
+        'reset-email-failed': 'Failed to send: ',
+        'error-too-many-requests': 'Too many requests. Please try again later.',
+        'back-to-login': 'Back to Sign In',
         'terms-welcome': 'Welcome to this website. By using this website, you agree to comply with the following terms of service:',
         'terms-1-title': '1. Service Description',
         'terms-1-content': 'This website provides personal tracking and recording services for personal use and entertainment purposes only.',
@@ -421,6 +443,15 @@ export const translations = {
         'time-just-now': '刚刚',
         'time-minutes-ago': '分钟前',
         'time-yesterday': '昨天',
+        'forgot-password': '忘记密码？',
+        'forgot-password-title': '忘记密码',
+        'forgot-password-description': '请输入您的电子邮件地址，我们将发送密码重设链接给您。',
+        'forgot-password-submit': '发送重设链接',
+        'sending': '发送中...',
+        'reset-email-sent': '密码重设链接已发送到您的电子邮件，请检查您的收件箱。',
+        'reset-email-failed': '发送失败：',
+        'error-too-many-requests': '请求过于频繁，请稍后再试。',
+        'back-to-login': '返回登录',
         'terms-welcome': '欢迎使用本网站。使用本网站即表示您同意遵守以下服务条款：',
         'terms-1-title': '1. 服务说明',
         'terms-1-content': '本网站提供个人追踪记录服务，仅供个人使用及娱乐目的。',
@@ -719,7 +750,34 @@ function updatePageTexts() {
                 parent.innerHTML = `${texts['no-account']} <a href="#" onclick="closeLogin(); openSignup(); return false;" style="color: var(--highlight); text-decoration: underline;">${texts['signup-link']}</a>`;
             }
         }
+        if (link.textContent.includes('忘記密碼') || link.textContent.includes('Forgot password')) {
+            link.textContent = texts['forgot-password'] || '忘記密碼？';
+        }
     });
+    
+    // 更新忘記密碼模態框
+    const forgotPasswordTitle = document.querySelector('#forgotPasswordModal h3');
+    if (forgotPasswordTitle) {
+        forgotPasswordTitle.textContent = texts['forgot-password-title'] || '忘記密碼';
+    }
+    
+    const forgotPasswordDescription = document.querySelector('#forgotPasswordModal .modal-body p');
+    if (forgotPasswordDescription && forgotPasswordDescription.textContent.includes('請輸入您的電子郵件')) {
+        forgotPasswordDescription.textContent = texts['forgot-password-description'] || '請輸入您的電子郵件地址，我們將發送密碼重設連結給您。';
+    }
+    
+    const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
+    if (forgotPasswordBtn) {
+        const currentText = forgotPasswordBtn.textContent;
+        if (!currentText.includes('發送中') && !currentText.includes('Sending') && !currentText.includes('发送中')) {
+            forgotPasswordBtn.textContent = texts['forgot-password-submit'] || '發送重設連結';
+        }
+    }
+    
+    const backToLoginLink = document.querySelector('#forgotPasswordModal .modal-body p:last-child a');
+    if (backToLoginLink) {
+        backToLoginLink.textContent = texts['back-to-login'] || '返回登入';
+    }
     
     const signupModalLinks = document.querySelectorAll('#signupModal a');
     signupModalLinks.forEach(link => {

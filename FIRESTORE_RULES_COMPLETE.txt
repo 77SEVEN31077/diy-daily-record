@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 針對 records 資料夾的規則（保持原有規則）
+    match /records/{docId} {
+      // 所有人都可以讀取資料（為了看排行榜）
+      // 所有人都可以新增資料（為了紀錄戰績）
+      allow read, create: if true;
+      
+      // 禁止任何人刪除或修改已存在的紀錄 (防止惡意破壞排行榜)
+      allow update, delete: if false;
+    }
+    
+    // 針對 messages 留言板集合的規則
+    match /messages/{messageId} {
+      // 讀取：僅已認證用戶可讀取
+      allow read: if request.auth != null;
+      
+      // 創建：僅已認證用戶可創建
+      // 驗證條件：
+      // 1. 必須是已登入用戶
+      // 2. userId 必須與當前登入用戶的 uid 一致（防止偽造）
+      // 3. 內容必須是字串
+      // 4. 內容長度必須在 1-500 字元之間
+      allow create: if request.auth != null 
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.content is string
+        && request.resource.data.content.size() > 0
+        && request.resource.data.content.size() <= 500
+        && request.resource.data.nickname is string
+        && request.resource.data.userEmail is string
+        && request.resource.data.createdAt is timestamp;
+      
+      // 更新：不允許（留言不能編輯）
+      allow update: if false;
+      
+      // 刪除：僅留言作者可刪除
+      // 驗證條件：
+      // 1. 必須是已登入用戶
+      // 2. 留言的 userId 必須與當前登入用戶的 uid 一致
+      allow delete: if request.auth != null 
+        && resource.data.userId == request.auth.uid;
+    }
+    
+    // 其他路徑默認拒絕
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
