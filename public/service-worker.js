@@ -1,4 +1,4 @@
-const CACHE_NAME = 'daily-record-v13';
+const CACHE_NAME = 'diy-daily-record-v-icon-20260628';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -7,11 +7,13 @@ const urlsToCache = [
   '/privacy.html',
   '/manifest.json',
   '/favicon.ico',
-  '/favicon-16x16.png',
-  '/favicon-32x32.png',
-  '/apple-touch-icon.png',
-  '/icon-192.png',
-  '/icon-512.png',
+  '/favicon.svg',
+  '/icons/favicon-16x16.png',
+  '/icons/favicon-32x32.png',
+  '/icons/app-icon-180.png',
+  '/icons/app-icon-192.png',
+  '/icons/app-icon-512.png',
+  '/icons/app-icon-maskable-512.png',
   '/icons/hero-icon-dark.png',
   '/icons/hero-icon-light.png',
   '/icons/section-icon-dark.png',
