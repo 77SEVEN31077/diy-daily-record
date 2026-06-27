@@ -226,6 +226,10 @@ export const translations = {
         'hero-desc-line1': '不需要登入。',
         'hero-desc-line2': '私人紀錄保存在本機。',
         'hero-desc-line3': '只有選擇加入排行榜時，才會公開暱稱與本月次數。',
+        'tip-title': '小提示',
+        'tip-line1': '不需要登入。',
+        'tip-line2': '私人紀錄保存在本機。',
+        'tip-line3': '只有選擇加入排行榜時，才會公開暱稱與本月次數。',
         'record-title': '新增紀錄',
         'time-label': '時間',
         'note-label': '備註（可選）',
@@ -361,6 +365,10 @@ export const translations = {
         'hero-desc-line1': 'No account required.',
         'hero-desc-line2': 'Private records stay on this device.',
         'hero-desc-line3': 'Only when you choose to join the leaderboard will your nickname and monthly count be public.',
+        'tip-title': 'Quick Note',
+        'tip-line1': 'No account required.',
+        'tip-line2': 'Private records stay on this device.',
+        'tip-line3': 'Only when you choose to join the leaderboard will your nickname and monthly count be public.',
         'record-title': 'New Record',
         'time-label': 'Time',
         'note-label': 'Note (optional)',
@@ -496,6 +504,10 @@ export const translations = {
         'hero-desc-line1': '不需要登录。',
         'hero-desc-line2': '私人记录保存在本机。',
         'hero-desc-line3': '只有选择加入排行榜时，才会公开昵称与本月次数。',
+        'tip-title': '小提示',
+        'tip-line1': '不需要登录。',
+        'tip-line2': '私人记录保存在本机。',
+        'tip-line3': '只有选择加入排行榜时，才会公开昵称与本月次数。',
         'record-title': '新增记录',
         'time-label': '时间',
         'note-label': '备注（可选）',
@@ -664,6 +676,10 @@ function updatePageTexts() {
     const titleEl = document.querySelector('title');
     if (titleEl) titleEl.textContent = `${texts['title']} - ${texts['subtitle']}`;
 
+    setText('tip-title', 'tip-title');
+    setText('tip-line1', 'tip-line1');
+    setText('tip-line2', 'tip-line2');
+    setText('tip-line3', 'tip-line3');
     setText('record-section-title', 'record-title');
     setText('time-label', 'time-label');
     setText('note-label', 'note-label');
@@ -692,10 +708,10 @@ function updatePageTexts() {
     setText('sync-desc-line2', 'sync-desc-line2');
     setText('sync-desc-line3', 'sync-desc-line3');
 
-    const navTitle = document.querySelector('.nav-left a');
+    const navTitle = document.querySelector('.nav-left a.logo-text') || document.querySelector('.nav-left a');
     if (navTitle) navTitle.textContent = texts['title'];
 
-    const h1 = document.querySelector('h1');
+    const h1 = document.querySelector('h1.hero-title') || document.querySelector('h1');
     if (h1) h1.textContent = texts['title'];
 
     const h2 = document.querySelector('.hero-subtitle');

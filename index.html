@@ -36,7 +36,7 @@
     <nav class="top-nav">
         <div class="nav-container">
             <div class="nav-left">
-                <a href="/">打飛機紀錄</a>
+                <a href="/" class="logo-text site-title">打飛機紀錄</a>
             </div>
             <div class="nav-right">
                 <div class="dropdown">
@@ -122,9 +122,9 @@
         </div>
     </nav>
 
-    <div class="container" style="padding: 20px; margin-top: 0;">
+    <main class="container main">
         <header class="hero">
-            <h1>打飛機紀錄</h1>
+            <h1 class="hero-title">打飛機紀錄</h1>
             <h2 class="hero-subtitle">私密紀錄，不評判。</h2>
             <div class="hero-description" id="hero-description">
                 <p class="hero-desc-lead" id="hero-desc-lead">記下時間，看看頻率，順便面對一下自己。</p>
@@ -134,9 +134,24 @@
             </div>
         </header>
 
-        <!-- 記錄表單 -->
-        <div class="section-box" id="record-section">
-            <div class="section-title" id="record-section-title">新增紀錄</div>
+        <div class="content-stack">
+            <!-- 小提示 -->
+            <section class="section-box section-card tip-card" id="tip-section">
+                <div class="section-header card-header">
+                    <div class="section-title card-title" id="tip-title">小提示</div>
+                </div>
+                <div class="tip-lines">
+                    <span class="tip-line" id="tip-line1">不需要登入。</span>
+                    <span class="tip-line" id="tip-line2">私人紀錄保存在本機。</span>
+                    <span class="tip-line" id="tip-line3">只有選擇加入排行榜時，才會公開暱稱與本月次數。</span>
+                </div>
+            </section>
+
+            <!-- 記錄表單 -->
+            <section class="section-box section-card record-card" id="record-section">
+                <div class="section-header card-header">
+                    <div class="section-title card-title" id="record-section-title">新增紀錄</div>
+                </div>
             <div class="form-group">
                 <label for="record-time" id="time-label">時間</label>
                 <input type="datetime-local" id="record-time" class="record-time">
@@ -145,7 +160,7 @@
                 <label for="record-note" id="note-label">備註（可選）</label>
                 <input type="text" id="record-note" maxlength="200" placeholder="只保存在本設備，可寫可不寫。">
             </div>
-            <div class="leaderboard-optin">
+            <div class="leaderboard-optin optin-box">
                 <label class="checkbox-label">
                     <input type="checkbox" id="join-leaderboard">
                     <span id="join-leaderboard-label">加入本月排行榜</span>
@@ -156,12 +171,15 @@
                 </div>
                 <p class="optin-hint" id="optin-hint">只公開暱稱與本月次數，不公開具體時間。</p>
             </div>
-            <button class="btn" onclick="addRecord()">記錄這一次</button>
+            <button class="btn primary-button" onclick="addRecord()">記錄這一次</button>
+            </section>
         </div>
 
         <!-- 本地統計 -->
-        <div class="section-box" id="stats-section">
-            <div class="section-title" id="stats-section-title">目前統計</div>
+        <section class="section-box section-card" id="stats-section">
+            <div class="section-header card-header">
+                <div class="section-title card-title" id="stats-section-title">目前統計</div>
+            </div>
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-label" id="stat-since-label">距離上次</div>
@@ -181,27 +199,31 @@
                 <ul class="history-list" id="history-list"></ul>
                 <p class="empty-hint" id="history-empty" style="display:none;">尚無紀錄。這裡目前很乾淨。</p>
             </div>
-        </div>
+        </section>
 
         <!-- 排行榜 -->
-        <div class="section-box">
-            <div class="section-title" id="rank-section-title">本月排行榜</div>
+        <section class="section-box section-card">
+            <div class="section-header card-header">
+                <div class="section-title card-title" id="rank-section-title">本月排行榜</div>
+            </div>
             <div class="rank-subtitle" id="rank-subtitle">Top 30</div>
             <ul class="rank-list" id="rank-list">
                 <li class="rank-item" style="justify-content: center; color: #444;">載入中...</li>
             </ul>
-        </div>
+        </section>
 
         <!-- 分享 -->
-        <div class="section-box no-capture">
+        <section class="section-box section-card no-capture">
             <button class="btn btn-share" id="share-generate-btn" onclick="shareStats()">生成戰績圖</button>
             <p id="share-msg" class="share-msg" style="display: none;"></p>
             <button type="button" class="btn btn-share-download" id="share-download-btn" style="display: none;" onclick="downloadShareImage()">下載圖片</button>
-        </div>
+        </section>
 
         <!-- 跨裝置同步（進階） -->
-        <div class="section-box sync-section no-capture" id="sync-section">
-            <div class="section-title" id="sync-section-title">跨裝置同步</div>
+        <section class="section-box section-card sync-section no-capture" id="sync-section">
+            <div class="section-header card-header">
+                <div class="section-title card-title" id="sync-section-title">跨裝置同步</div>
+            </div>
             <p class="sync-description" id="sync-description">
                 <span class="sync-desc-line" id="sync-desc-line1">進階功能，開發中。</span>
                 <span class="sync-desc-line" id="sync-desc-line2">不登入也能完整使用本機紀錄。</span>
@@ -211,8 +233,8 @@
                 <a href="#" class="nav-link nav-link-signin" onclick="openLogin(); return false;">登入</a>
                 <a href="#" class="nav-link nav-link-signup" onclick="openSignup(); return false;">註冊</a>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <!-- 分享截圖專用區（不含具體時間） -->
     <div id="share-capture-area" class="share-capture-area" aria-hidden="true">
