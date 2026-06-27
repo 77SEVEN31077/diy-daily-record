@@ -1,4 +1,4 @@
-const CACHE_NAME = 'diy-daily-record-v-age-confirm-20260628';
+const CACHE_NAME = 'diy-daily-record-v-support-20260628';
 const urlsToCache = [
   '/',
   '/index.html',

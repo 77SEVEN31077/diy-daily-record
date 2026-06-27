@@ -813,6 +813,36 @@ button,
     fill: var(--text-color);
 }
 
+.support-note {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+}
+
+.support-note h2 {
+    margin: 0 0 0.75rem;
+    text-align: left;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.support-note p {
+    margin: 0 0 1rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+}
+
+.support-link-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    min-height: 44px;
+    padding: 0.65rem 1.1rem;
+    font-size: 0.92rem;
+    text-decoration: none;
+}
+
 /* 截圖時隱藏不需要的元素 */
 .no-capture {
     display: block;
