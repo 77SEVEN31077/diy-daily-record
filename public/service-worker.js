@@ -1,4 +1,4 @@
-const CACHE_NAME = 'diy-daily-record-v-support-20260628';
+const CACHE_NAME = 'diy-daily-record-v-share-mark-20260628';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -18,6 +18,8 @@ const urlsToCache = [
   '/icons/hero-icon-light.png',
   '/icons/section-icon-dark.png',
   '/icons/section-icon-light.png',
+  '/icons/share-card-mark-dark.png',
+  '/icons/share-card-mark-light.png',
   '/icons/age-icon-dark.png',
   '/icons/age-icon-light.png',
   'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js',

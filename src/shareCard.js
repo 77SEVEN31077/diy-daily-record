@@ -26,6 +26,11 @@ const CARD_W = 888;
 const CARD_H = 888;
 const PAD = 80;
 
+const MARK_PATHS = {
+    dark: '/icons/share-card-mark-dark.png',
+    light: '/icons/share-card-mark-light.png',
+};
+
 export function getResolvedTheme() {
     const root = document.documentElement;
     const dataTheme = root.getAttribute('data-theme');
@@ -33,6 +38,20 @@ export function getResolvedTheme() {
     if (dataTheme === 'dark') return 'dark';
     if (root.classList.contains('light')) return 'light';
     return 'dark';
+}
+
+export function getShareCardMarkSrc(theme) {
+    const resolved = theme === 'light' ? 'light' : 'dark';
+    return MARK_PATHS[resolved];
+}
+
+function loadImage(src) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+    });
 }
 
 function roundRect(ctx, x, y, w, h, r) {
@@ -46,7 +65,20 @@ function roundRect(ctx, x, y, w, h, r) {
     ctx.closePath();
 }
 
-export function renderBattleCard({ texts, monthlyCount, sinceLast, longestGap, theme }) {
+function computeMarkLayout(lastRowY) {
+    const markSize = Math.round(SIZE * 0.222);
+    const lastRowBottom = lastRowY + 46;
+    let markY = lastRowBottom + 44;
+    const footerY = CARD_Y + CARD_H - PAD - 20;
+    const maxMarkBottom = footerY - 24;
+    if (markY + markSize > maxMarkBottom) {
+        markY = maxMarkBottom - markSize;
+    }
+    const markX = Math.round((SIZE - markSize) / 2);
+    return { markSize, markX, markY, footerY };
+}
+
+export async function renderBattleCard({ texts, monthlyCount, sinceLast, longestGap, theme }) {
     const palette = theme === 'light' ? LIGHT_PALETTE : DARK_PALETTE;
     const canvas = document.createElement('canvas');
     canvas.width = SIZE;
@@ -91,6 +123,7 @@ export function renderBattleCard({ texts, monthlyCount, sinceLast, longestGap, t
 
     let rowY = dividerY + 52;
     const rowGap = 108;
+    let lastRowY = rowY;
 
     rows.forEach(([label, value], index) => {
         if (index > 0) {
@@ -111,14 +144,26 @@ export function renderBattleCard({ texts, monthlyCount, sinceLast, longestGap, t
         ctx.font = `700 46px ${FONT_MONO}`;
         ctx.fillText(value, innerX + innerW, rowY);
 
+        lastRowY = rowY;
         rowY += rowGap;
     });
+
+    const { markSize, markX, markY, footerY } = computeMarkLayout(lastRowY);
+
+    try {
+        const markImg = await loadImage(getShareCardMarkSrc(theme));
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(markImg, markX, markY, markSize, markSize);
+    } catch (err) {
+        console.warn('[shareCard] mark image failed to load', err);
+    }
 
     const footer = texts['share-card-footer'] || '';
     ctx.textAlign = 'center';
     ctx.fillStyle = palette.textMuted;
     ctx.font = `400 30px ${FONT_SANS}`;
-    ctx.fillText(footer, centerX, CARD_Y + CARD_H - PAD - 32);
+    ctx.fillText(footer, centerX, footerY);
 
     return canvas;
 }

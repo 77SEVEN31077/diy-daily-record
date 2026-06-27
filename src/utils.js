@@ -49,7 +49,7 @@ export async function shareStats() {
         const sinceLastStr = sinceLast != null ? formatDuration(sinceLast, texts) : '—';
         const longestStr = longestInterval != null ? formatDuration(longestInterval, texts) : '—';
 
-        const canvas = renderBattleCard({
+        const canvas = await renderBattleCard({
             texts,
             monthlyCount,
             sinceLast: sinceLastStr,
