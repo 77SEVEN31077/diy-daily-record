@@ -278,6 +278,30 @@ body {
 }
 
 /* Hero 主標：不使用漸層，確保淺色模式可讀 */
+.hero-title-row {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin: 0 auto 0.5rem;
+    flex-wrap: nowrap;
+    max-width: 100%;
+}
+
+.hero-icon {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    flex: 0 0 auto;
+    display: block;
+}
+
+.hero-title-row .hero-title {
+    margin: 0;
+    text-align: left;
+    flex: 0 1 auto;
+}
+
 h1.hero-title,
 .hero-title {
     background: none;
@@ -389,9 +413,32 @@ h2:not(.hero-subtitle) {
 
 .card-header,
 .section-header {
+    display: block;
     padding-bottom: 0.75rem;
     margin-bottom: 1rem;
     border-bottom: 1.5px solid var(--border);
+}
+
+.card-header .section-title-row,
+.section-header .section-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 34px;
+    margin-bottom: 0;
+}
+
+.section-title-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    flex: 0 0 auto;
+    display: block;
+}
+
+.section-title-row .section-title {
+    margin: 0;
+    line-height: 1.2;
 }
 
 .section-header .section-title,
@@ -410,10 +457,6 @@ h2:not(.hero-subtitle) {
 
 .tip-card {
     padding: 1.25rem 1.45rem;
-}
-
-.tip-card .section-title {
-    margin-bottom: 0.8rem;
 }
 
 .tip-lines {
@@ -1036,6 +1079,25 @@ button,
     h1,
     .hero-title {
         font-size: 2rem;
+    }
+
+    .hero-title-row {
+        gap: 12px;
+    }
+
+    .hero-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .section-title-row {
+        gap: 9px;
+        min-height: 30px;
+    }
+
+    .section-title-icon {
+        width: 28px;
+        height: 28px;
     }
 
     .hero-subtitle {
