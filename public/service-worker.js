@@ -1,4 +1,4 @@
-const CACHE_NAME = 'daily-record-v12';
+const CACHE_NAME = 'daily-record-v13';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -6,6 +6,10 @@ const urlsToCache = [
   '/terms.html',
   '/privacy.html',
   '/manifest.json',
+  '/favicon.ico',
+  '/favicon-16x16.png',
+  '/favicon-32x32.png',
+  '/apple-touch-icon.png',
   '/icon-192.png',
   '/icon-512.png',
   '/icons/hero-icon-dark.png',
