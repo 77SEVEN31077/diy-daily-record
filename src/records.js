@@ -1,4 +1,4 @@
-import { getLocalRecords, saveLocalRecords, renderLocalStats, updateShareCaptureArea } from './stats.js';
+import { getLocalRecords, saveLocalRecords, renderLocalStats } from './stats.js';
 import { syncLeaderboardIncrement } from './leaderboardSync.js';
 import { sanitizeDisplayName } from './sanitize.js';
 
@@ -38,7 +38,6 @@ window.addRecord = async function() {
     saveLocalRecords(records);
 
     renderLocalStats();
-    updateShareCaptureArea();
 
     // Firebase：僅 opt-in 時寫入排行榜聚合資料
     if (joinLeaderboard) {

@@ -6,7 +6,7 @@ import './language.js';
 import './auth.js';
 import { initTime, shareStats, initLanguage, initAgeGate } from './utils.js';
 import './records.js';
-import { renderLocalStats, updateShareCaptureArea } from './stats.js';
+import { renderLocalStats } from './stats.js';
 import { initLeaderboardOptIn } from './leaderboardSync.js';
 import './leaderboard.js';
 
@@ -18,7 +18,6 @@ window.addEventListener('DOMContentLoaded', () => {
     initTime();
     initLeaderboardOptIn();
     renderLocalStats();
-    updateShareCaptureArea();
 
     if (typeof window.loadLeaderboard === 'function') {
         window.loadLeaderboard();

@@ -1,11 +1,10 @@
-const CACHE_NAME = 'daily-record-v7';
+const CACHE_NAME = 'daily-record-v8';
 const urlsToCache = [
   '/',
   '/index.html',
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
-  'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
   'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js',
   'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js',
   'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js'

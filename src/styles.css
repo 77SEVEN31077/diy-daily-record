@@ -818,7 +818,7 @@ button,
 /* Hero */
 .hero {
     text-align: center;
-    margin: 1.75rem auto 3rem;
+    margin: 1.5rem auto 2rem;
 }
 
 .sync-description .sync-desc-line {
@@ -1047,7 +1047,7 @@ button,
     }
 
     .hero {
-        margin: 1.5rem auto 2.5rem;
+        margin: 1.25rem auto 1.75rem;
     }
 
     .container,
