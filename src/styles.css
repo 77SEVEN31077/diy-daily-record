@@ -1146,6 +1146,69 @@ button,
     line-height: 1.65;
 }
 
+.legal-page {
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.legal-back-wrap {
+    margin: 0 0 1rem;
+}
+
+.legal-back-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.legal-back-link:hover {
+    color: var(--text-main);
+}
+
+.legal-card {
+    text-align: left;
+}
+
+.legal-page-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0 0 1.25rem;
+    text-align: left;
+}
+
+.legal-body {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+.legal-body p {
+    margin: 0 0 1rem;
+}
+
+.legal-list {
+    margin: 0 0 1rem 1.25rem;
+    padding: 0;
+}
+
+.legal-list li {
+    margin-bottom: 0.5rem;
+}
+
+.legal-section {
+    margin-bottom: 1.25rem;
+}
+
+.legal-section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0 0 0.5rem;
+}
+
 /* 手機版 */
 @media (max-width: 640px) {
     .content-stack {

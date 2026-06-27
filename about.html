@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000">
+    <title>關於 - 打飛機紀錄</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <script type="module" src="/src/legalPage.js"></script>
+</head>
+<body data-legal-page="about">
+    <nav class="top-nav">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="/" class="logo-text site-title">打飛機紀錄</a>
+            </div>
+            <div class="nav-right">
+                <div class="dropdown">
+                    <button class="nav-btn nav-btn-language" type="button" id="language-toggle-btn" aria-haspopup="menu" aria-expanded="false" onclick="toggleLanguageDropdown(event)">
+                        <svg class="nav-btn-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="m5 8 6 6"></path>
+                            <path d="m4 14 6-6 2-3"></path>
+                            <path d="M2 5h12"></path>
+                            <path d="M7 2h1"></path>
+                            <path d="m22 22-5-10-5 10"></path>
+                            <path d="M14 18h6"></path>
+                        </svg>
+                    </button>
+                    <div class="dropdown-menu" id="language-dropdown">
+                        <a href="#" class="dropdown-item" onclick="selectLanguage('zh-TW'); return false;"><span>繁體中文</span></a>
+                        <a href="#" class="dropdown-item" onclick="selectLanguage('en'); return false;"><span>English</span></a>
+                        <a href="#" class="dropdown-item" onclick="selectLanguage('zh-CN'); return false;"><span>简体中文</span></a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="nav-btn nav-btn-theme" type="button" id="theme-toggle-btn" aria-haspopup="menu" aria-expanded="false" onclick="toggleThemeDropdown(event)">
+                        <svg class="nav-btn-icon" id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="4"></circle>
+                            <path d="M12 2v2"></path>
+                            <path d="M12 20v2"></path>
+                            <path d="m4.93 4.93 1.41 1.41"></path>
+                            <path d="m17.66 17.66 1.41 1.41"></path>
+                            <path d="M2 12h2"></path>
+                            <path d="M20 12h2"></path>
+                            <path d="m6.34 17.66-1.41 1.41"></path>
+                            <path d="m19.07 4.93-1.41 1.41"></path>
+                        </svg>
+                    </button>
+                    <div class="dropdown-menu" id="theme-dropdown">
+                        <a href="#" class="dropdown-item" data-theme="light" onclick="selectTheme('light'); return false;"><span>淺色模式</span></a>
+                        <a href="#" class="dropdown-item" data-theme="dark" onclick="selectTheme('dark'); return false;"><span>深色模式</span></a>
+                        <a href="#" class="dropdown-item" data-theme="system" onclick="selectTheme('system'); return false;"><span>系統設定</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container main legal-page">
+        <p class="legal-back-wrap">
+            <a href="/" id="back-home" class="legal-back-link">返回首頁</a>
+        </p>
+        <article class="section-box section-card legal-card">
+            <h1 id="legal-title" class="legal-page-title">關於</h1>
+            <div id="legal-body" class="legal-body"></div>
+        </article>
+    </main>
+
+    <footer class="footer">
+        <div style="margin-bottom: 15px;">
+            <span style="color: var(--text-muted);">@ 2025 打飛機  ｜  </span>
+            <a href="https://x.com/77seven31077" target="_blank" rel="noopener noreferrer" class="footer-x-link" style="display: inline-block; vertical-align: middle;">
+                <svg class="footer-x-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 1rem; height: 1rem;">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" fill="var(--text-muted)"/>
+                </svg>
+            </a>
+        </div>
+        <span id="footer-links">
+            <a href="/about.html" class="footer-link">關於</a>
+            <span style="color: var(--text-muted);"> / </span>
+            <a href="/terms.html" class="footer-link">服務條款</a>
+            <span style="color: var(--text-muted);"> / </span>
+            <a href="/privacy.html" class="footer-link">隱私政策</a>
+        </span>
+    </footer>
+</body>
+</html>

@@ -26,6 +26,7 @@ window.confirmAgeGate = function() {
 // 分享與截圖功能（Canvas 繪製戰績圖）
 import { renderBattleCard, getResolvedTheme } from './shareCard.js';
 import { computeStats, formatDuration } from './stats.js';
+import { renderFooterLinksHTML } from './legalContent.js';
 
 let pendingShareImageDataUrl = null;
 
@@ -91,112 +92,11 @@ window.downloadShareImage = function() {
     }
 };
 
-// 模態框管理
-window.openTerms = function() {
-    // 確保內容是最新語言
-    const texts = window.getTexts ? window.getTexts() : {};
-    const termsModalBody = document.querySelector('#termsModal .modal-body');
-    if (termsModalBody && texts['terms-welcome']) {
-        termsModalBody.innerHTML = `
-            <p>${texts['terms-welcome']}</p>
-            
-            <p><strong>${texts['terms-1-title']}</strong></p>
-            <p>${texts['terms-1-content']}</p>
-            
-            <p><strong>${texts['terms-2-title']}</strong></p>
-            <p>${texts['terms-2-content']}</p>
-            
-            <p><strong>${texts['terms-3-title']}</strong></p>
-            <p>${texts['terms-3-content']}</p>
-            
-            <p><strong>${texts['terms-4-title']}</strong></p>
-            <p>${texts['terms-4-content']}</p>
-            
-            <p><strong>${texts['terms-5-title']}</strong></p>
-            <p>${texts['terms-5-content']}</p>
-            
-            <p><strong>${texts['terms-6-title']}</strong></p>
-            <p>${texts['terms-6-content']}</p>
-        `;
-    }
-    const termsTitle = document.querySelector('#termsModal h3');
-    if (termsTitle && texts['terms-title']) {
-        termsTitle.textContent = texts['terms-title'];
-    }
-    document.getElementById('termsModal').style.display = 'block';
-};
-
-window.closeTerms = function() {
-    document.getElementById('termsModal').style.display = 'none';
-};
-
-function renderPrivacyBody(texts) {
-    const items = [
-        texts['privacy-local'],
-        texts['privacy-firebase'],
-        texts['privacy-public'],
-        texts['privacy-delete'],
-        texts['privacy-third-party'],
-        texts['privacy-analytics'],
-        texts['privacy-sell']
-    ].filter(Boolean);
-    return `<ul class="privacy-list">${items.map(item => `<li>${item}</li>`).join('')}</ul>`;
-}
-
-function renderAboutBody(texts) {
-    return `
-        <p><strong>${texts['about-1-title'] || ''}</strong></p>
-        <p>${texts['about-1-content'] || ''}</p>
-        <p><strong>${texts['about-2-title'] || ''}</strong></p>
-        <p>${texts['about-2-p1'] || ''}</p>
-        <p>${texts['about-2-p2'] || ''}</p>
-        <p>${texts['about-2-p3'] || ''}</p>
-        <p>${texts['about-2-p4'] || ''}</p>
-        <p>${texts['about-2-p5'] || ''}</p>
-        <p>${texts['about-2-p6'] || ''}</p>
-        <p style="text-align: right; margin-top: 20px; color: #888;">${texts['about-author'] || ''}</p>
-    `;
-}
-
-window.openPrivacy = function() {
-    const texts = window.getTexts ? window.getTexts() : {};
-    const privacyModalBody = document.querySelector('#privacyModal .modal-body');
-    if (privacyModalBody) privacyModalBody.innerHTML = renderPrivacyBody(texts);
-    const privacyTitle = document.querySelector('#privacyModal h3');
-    if (privacyTitle && texts['privacy-title']) privacyTitle.textContent = texts['privacy-title'];
-    document.getElementById('privacyModal').style.display = 'block';
-};
-
-window.closePrivacy = function() {
-    document.getElementById('privacyModal').style.display = 'none';
-};
-
-window.openAbout = function() {
-    const texts = window.getTexts ? window.getTexts() : {};
-    const aboutModalBody = document.querySelector('#aboutModal .modal-body');
-    if (aboutModalBody) aboutModalBody.innerHTML = renderAboutBody(texts);
-    const aboutTitle = document.querySelector('#aboutModal h3');
-    if (aboutTitle && texts['about-title']) aboutTitle.textContent = texts['about-title'];
-    document.getElementById('aboutModal').style.display = 'block';
-};
-
-window.closeAbout = function() {
-    document.getElementById('aboutModal').style.display = 'none';
-};
-
 // 點擊模態框外部關閉
 window.onclick = function(event) {
-    const termsModal = document.getElementById('termsModal');
-    const privacyModal = document.getElementById('privacyModal');
     const loginModal = document.getElementById('loginModal');
     const signupModal = document.getElementById('signupModal');
-    
-    if (event.target == termsModal) {
-        termsModal.style.display = 'none';
-    }
-    if (event.target == privacyModal) {
-        privacyModal.style.display = 'none';
-    }
+
     if (event.target == loginModal) {
         loginModal.style.display = 'none';
     }
@@ -206,10 +106,6 @@ window.onclick = function(event) {
     const forgotPasswordModal = document.getElementById('forgotPasswordModal');
     if (event.target == forgotPasswordModal) {
         forgotPasswordModal.style.display = 'none';
-    }
-    const aboutModal = document.getElementById('aboutModal');
-    if (event.target == aboutModal) {
-        aboutModal.style.display = 'none';
     }
 };
 
@@ -272,26 +168,52 @@ export const translations = {
         'terms': '服務條款',
         'privacy': '隱私政策',
         'about': '關於',
+        'back-home': '返回首頁',
         'terms-title': '服務條款',
         'privacy-title': '隱私政策',
         'about-title': '關於',
-        'privacy-local': '本機保存：每次紀錄的時間與備註（若有），以及語言、主題、排行榜 opt-in 設定。',
-        'privacy-firebase': 'Firebase 保存：僅在您勾選加入排行榜時，上傳公開暱稱、月份與本月累計次數。',
-        'privacy-public': '公開情況：只有勾選加入排行榜時，暱稱與本月次數會顯示在公開排行榜；具體時間與備註不會上傳。',
-        'privacy-delete': '刪除本機資料：清除瀏覽器本網站的 localStorage 即可移除所有本機紀錄與設定。',
-        'privacy-third-party': '第三方服務：使用 Firebase（Google）提供排行榜與帳號驗證；html2canvas 用於生成分享圖。',
-        'privacy-analytics': '分析工具：本網站未嵌入第三方分析或追蹤工具。',
-        'privacy-sell': '資料出售：我們不出售您的個人資料。',
-        'about-1-title': '1. 網站起源',
-        'about-1-content': '純粹為了打飛機而生',
-        'about-2-title': '2. 關於打飛機的意義',
-        'about-2-p1': '目前這個時代，"打飛機" 被歸納為是一個很 "低級" 的詞彙。甚至戀愛、約炮和嫖娼都比打飛機顯得要 "高級"，經常打飛機的人還會被貼上 "Loser" 的標籤。',
-        'about-2-p2': '但是打飛機其實是解決性慾成本最低的方式。',
-        'about-2-p3': '你不打飛機，你就得通過戀愛、約炮、或者嫖娼去解決你的性慾，但是這三者無論是從時間、精神、或金錢層面去看，成本都遠遠高於打飛機。所以，打飛機實際上是在以最高效的方式來解決自己的性慾。',
-        'about-2-p4': '"自己自足" 在任何領域都屬於 "高級" 的詞彙，但是到了 "解決性慾" 這件事情上，自給自足反而成了一個 "低級" 詞彙。所以我覺得，目前這個時代，世人對於 "打飛機" 這件事情有著嚴重的價值錯判。',
-        'about-2-p5': 'AI 帶來的信息爆炸時代開始逐漸把 "效率主義" 推向主流，而 "打飛機" 這個在 "解決性慾" 領域中最有 "效率" 的解決方案可能會被大家重新正視和定位。',
-        'about-2-p6': '未來會有越來越多的人選擇打飛機，整個世界會迎來一次屬於打飛機的大牛市，進入全民打飛機的時代。到時候你跟別人說你打飛機，別人會覺得你很時尚，你很高級。',
-        'about-author': '-殺破狼(X:@wolfyxbt)',
+        'about-p1': '這是一個很不必要、但又莫名其妙成立的私人紀錄工具。',
+        'about-p2': '它不是健康建議，也不是人生指南。',
+        'about-p3': '它只是把一件通常不會被記錄的事，做成一個可以記錄、統計、截圖的小工具。',
+        'about-p4': '這個網站的重點不是鼓勵你增加頻率，也不是評判你。',
+        'about-p5': '它只做三件事：',
+        'about-li1': '讓你記下時間。',
+        'about-li2': '讓你看看自己的頻率。',
+        'about-li3': '如果你願意，讓你用公開暱稱加入本月排行榜。',
+        'about-p6': '私人紀錄預設保存在本設備。',
+        'about-p7': '只有選擇加入排行榜時，才會公開暱稱與本月次數。',
+        'about-p8': 'Just for fun.',
+        'about-p9': '但隱私邊界要認真。',
+        'terms-intro': '歡迎使用本網站。使用本網站即表示你同意以下條款。',
+        'terms-1-title': '1. 服務說明',
+        'terms-1-content': '本網站提供私人紀錄與娛樂用途的記錄工具。你可以記下時間、查看本機統計，並可選擇是否加入本月排行榜。',
+        'terms-2-title': '2. 年齡限制',
+        'terms-2-content': '本網站僅供 18 歲以上使用者使用。繼續使用本網站，即表示你確認自己已年滿 18 歲。',
+        'terms-3-title': '3. 使用者責任',
+        'terms-3-content': '你應自行負責使用本網站的行為與輸入內容。請勿濫用排行榜、惡意灌水、攻擊網站、輸入違法內容，或以任何方式干擾服務運作。',
+        'terms-4-title': '4. 隱私與公開資料',
+        'terms-4-content': '私人紀錄預設保存在本設備。只有在你選擇加入排行榜時，公開暱稱與本月次數才會顯示於排行榜。更多資料處理方式請參閱隱私政策。',
+        'terms-5-title': '5. 非專業建議',
+        'terms-5-content': '本網站僅供私人紀錄與娛樂用途，不提供醫療、心理、性健康或其他專業建議。如你對身體或心理狀態有疑慮，請尋求專業協助。',
+        'terms-6-title': '6. 服務變更與終止',
+        'terms-6-content': '我們可能隨時修改、暫停或終止本網站的部分或全部功能，恕不另行通知。',
+        'terms-7-title': '7. 條款修改',
+        'terms-7-content': '我們可能不定期更新本服務條款。更新後的內容會公布於本頁面。',
+        'privacy-intro': '本網站的原則是：私人紀錄預設留在你的設備上。只有你主動選擇加入排行榜時，才會公開必要資料。',
+        'privacy-1-title': '1. 本機保存',
+        'privacy-1-content': '本網站會在你的瀏覽器 localStorage 中保存紀錄時間、備註（若有）、語言設定、主題設定、排行榜選項，以及年齡確認狀態。',
+        'privacy-2-title': '2. Firebase 保存',
+        'privacy-2-content': '只有當你選擇加入本月排行榜時，本網站才會向 Firebase 保存公開暱稱、月份、本月累計次數與更新時間。如果你使用登入或註冊功能，Firebase Authentication 可能會處理你的電子郵件與登入驗證資料。',
+        'privacy-3-title': '3. 公開資料',
+        'privacy-3-content': '只有你選擇加入排行榜時，公開暱稱與本月次數會顯示在公開排行榜上。具體紀錄時間、備註與完整歷史不會上傳，也不會公開。',
+        'privacy-4-title': '4. 刪除本機資料',
+        'privacy-4-content': '你可以透過瀏覽器清除本網站的 localStorage，移除保存在本機的紀錄與設定。請注意，清除本機資料不會自動刪除已公開的排行榜資料。',
+        'privacy-5-title': '5. 第三方服務',
+        'privacy-5-content': '本網站使用 Firebase 提供排行榜與帳號驗證功能，並使用 html2canvas 或 canvas 相關工具生成分享圖。',
+        'privacy-6-title': '6. 分析與追蹤',
+        'privacy-6-content': '本網站目前未嵌入第三方分析工具或廣告追蹤工具。',
+        'privacy-7-title': '7. 資料出售',
+        'privacy-7-content': '我們不出售你的個人資料。',
         'age-gate-title': '年齡確認',
         'age-gate-line1': '本網站僅供 18 歲以上使用者。',
         'age-gate-line2': '作為私人紀錄與娛樂用途。',
@@ -340,19 +262,6 @@ export const translations = {
         'update-later': '稍後',
         'ok': '確定',
         'time-just-now': '剛剛',
-        'terms-welcome': '歡迎使用本網站。使用本網站即表示您同意遵守以下服務條款：',
-        'terms-1-title': '1. 服務說明',
-        'terms-1-content': '本網站提供個人追蹤記錄服務，僅供個人使用及娛樂目的。',
-        'terms-2-title': '2. 使用者責任',
-        'terms-2-content': '使用者應確保所提供資訊的真實性，並對其使用本網站的行為負責。請適度操作，注意身體健康。',
-        'terms-3-title': '3. 隱私保護',
-        'terms-3-content': '我們重視您的隱私，相關隱私政策請參閱「隱私政策」頁面。',
-        'terms-4-title': '4. 免責聲明',
-        'terms-4-content': '本網站僅用於個人追蹤，只有娛樂價值，不提供其他額外服務。網站不對使用者的任何行為或後果負責。',
-        'terms-5-title': '5. 服務變更',
-        'terms-5-content': '我們保留隨時修改或終止服務的權利，恕不另行通知。',
-        'terms-6-title': '6. 條款修改',
-        'terms-6-content': '我們保留隨時修改本服務條款的權利，修改後的條款將在網站上公布。'
     },
     'en': {
         'title': 'DIY Daily Record',
@@ -411,26 +320,52 @@ export const translations = {
         'terms': 'Terms',
         'privacy': 'Privacy',
         'about': 'About',
+        'back-home': 'Back to home',
         'terms-title': 'Terms of Service',
         'privacy-title': 'Privacy Policy',
         'about-title': 'About',
-        'privacy-local': 'Stored locally: record times, optional notes, language, theme, and leaderboard opt-in settings.',
-        'privacy-firebase': 'Firebase: only when you opt in — public nickname, month, and monthly count.',
-        'privacy-public': 'Public data: only nickname and monthly count on the leaderboard if opted in. Times and notes are never uploaded.',
-        'privacy-delete': 'Delete local data: clear this site\'s localStorage in your browser.',
-        'privacy-third-party': 'Third parties: Firebase (Google) for leaderboard and auth; html2canvas for share images.',
-        'privacy-analytics': 'Analytics: no third-party analytics or tracking on this site.',
-        'privacy-sell': 'Data sales: we do not sell your personal data.',
-        'about-1-title': '1. Origin',
-        'about-1-content': 'Built for personal tracking.',
-        'about-2-title': '2. On efficiency',
-        'about-2-p1': 'Self-care tracking should be private and judgment-free.',
-        'about-2-p2': 'This tool keeps your data local by default.',
-        'about-2-p3': 'You choose what, if anything, goes public.',
-        'about-2-p4': 'No social pressure. Just your own rhythm.',
-        'about-2-p5': 'Track quietly. Share lightly if you want.',
-        'about-2-p6': 'Your data, your rules.',
-        'about-author': '',
+        'about-p1': 'This is an unnecessary, strangely reasonable private logging tool.',
+        'about-p2': 'It is not health advice. It is not a life guide.',
+        'about-p3': 'It simply turns something people usually do not record into something you can log, measure, and optionally share as a small battle card.',
+        'about-p4': 'The point is not to encourage frequency or judge anyone.',
+        'about-p5': 'This site does three things:',
+        'about-li1': 'Lets you log the time.',
+        'about-li2': 'Lets you check your own pattern.',
+        'about-li3': 'Lets you join the monthly leaderboard with a public nickname if you choose.',
+        'about-p6': 'Private records stay on this device by default.',
+        'about-p7': 'Only when you choose to join the leaderboard will your nickname and monthly count be public.',
+        'about-p8': 'Just for fun.',
+        'about-p9': 'But the privacy boundary is serious.',
+        'terms-intro': 'Welcome. By using this site, you agree to the following terms.',
+        'terms-1-title': '1. Service description',
+        'terms-1-content': 'This site provides a private logging tool for personal and entertainment purposes. You can log the time, view local statistics, and choose whether to join the monthly leaderboard.',
+        'terms-2-title': '2. Age restriction',
+        'terms-2-content': 'This site is intended for users 18+ only. By continuing to use this site, you confirm that you are at least 18 years old.',
+        'terms-3-title': '3. User responsibility',
+        'terms-3-content': 'You are responsible for your use of this site and any content you enter. Do not abuse the leaderboard, spam the service, attack the site, submit illegal content, or interfere with the operation of the service.',
+        'terms-4-title': '4. Privacy and public data',
+        'terms-4-content': 'Private records stay on this device by default. Only when you choose to join the leaderboard will your public nickname and monthly count appear on the leaderboard. See the Privacy Policy for more details.',
+        'terms-5-title': '5. No professional advice',
+        'terms-5-content': 'This site is for private logging and entertainment purposes only. It does not provide medical, psychological, sexual health, or other professional advice. If you have health concerns, seek professional help.',
+        'terms-6-title': '6. Service changes and termination',
+        'terms-6-content': 'We may modify, suspend, or terminate part or all of the service at any time without prior notice.',
+        'terms-7-title': '7. Terms updates',
+        'terms-7-content': 'We may update these terms from time to time. Updated terms will be posted on this page.',
+        'privacy-intro': 'The principle of this site is simple: private records stay on your device by default. Only when you choose to join the leaderboard will the necessary public data be shown.',
+        'privacy-1-title': '1. Local storage',
+        'privacy-1-content': 'This site stores record times, optional notes, language settings, theme settings, leaderboard preferences, and age confirmation status in your browser localStorage.',
+        'privacy-2-title': '2. Firebase storage',
+        'privacy-2-content': 'Only when you choose to join the monthly leaderboard will this site save your public nickname, month, monthly count, and update time to Firebase. If you use the login or sign-up feature, Firebase Authentication may process your email address and authentication data.',
+        'privacy-3-title': '3. Public data',
+        'privacy-3-content': 'Only when you join the leaderboard will your public nickname and monthly count appear on the public leaderboard. Exact record times, notes, and full history are not uploaded and are not public.',
+        'privacy-4-title': '4. Deleting local data',
+        'privacy-4-content': 'You can clear this site\'s localStorage in your browser to remove records and settings saved on this device. Please note that clearing local data does not automatically remove leaderboard data that has already been made public.',
+        'privacy-5-title': '5. Third-party services',
+        'privacy-5-content': 'This site uses Firebase for leaderboard and account authentication features, and uses html2canvas or canvas-related tools to generate share images.',
+        'privacy-6-title': '6. Analytics and tracking',
+        'privacy-6-content': 'This site currently does not include third-party analytics tools or advertising trackers.',
+        'privacy-7-title': '7. Data sales',
+        'privacy-7-content': 'We do not sell your personal data.',
         'age-gate-title': 'Age Confirmation',
         'age-gate-line1': 'This site is for users 18+ only.',
         'age-gate-line2': 'For private logging and entertainment purposes.',
@@ -479,19 +414,6 @@ export const translations = {
         'update-later': 'Later',
         'ok': 'OK',
         'time-just-now': 'Just now',
-        'terms-welcome': 'Welcome. By using this site you agree to these terms:',
-        'terms-1-title': '1. Service',
-        'terms-1-content': 'Personal tracking for private use and entertainment.',
-        'terms-2-title': '2. Responsibility',
-        'terms-2-content': 'Use in moderation and take care of your health.',
-        'terms-3-title': '3. Privacy',
-        'terms-3-content': 'See our Privacy Policy.',
-        'terms-4-title': '4. Disclaimer',
-        'terms-4-content': 'For personal tracking only. No liability for user actions.',
-        'terms-5-title': '5. Changes',
-        'terms-5-content': 'We may modify or terminate the service at any time.',
-        'terms-6-title': '6. Terms updates',
-        'terms-6-content': 'Updated terms will be posted on this site.'
     },
     'zh-CN': {
         'title': '打飞机记录',
@@ -550,26 +472,52 @@ export const translations = {
         'terms': '服务条款',
         'privacy': '隐私政策',
         'about': '关于',
+        'back-home': '返回首页',
         'terms-title': '服务条款',
         'privacy-title': '隐私政策',
         'about-title': '关于',
-        'privacy-local': '本机保存：每次记录的时间与备注（若有），以及语言、主题、排行榜 opt-in 设定。',
-        'privacy-firebase': 'Firebase 保存：仅在您勾选加入排行榜时，上传公开昵称、月份与本月累计次数。',
-        'privacy-public': '公开情况：只有勾选加入排行榜时，昵称与本月次数会显示在公开排行榜；具体时间与备注不会上传。',
-        'privacy-delete': '删除本机资料：清除浏览器本网站的 localStorage 即可移除所有本机记录与设定。',
-        'privacy-third-party': '第三方服务：使用 Firebase（Google）提供排行榜与账号验证；html2canvas 用于生成分享图。',
-        'privacy-analytics': '分析工具：本网站未嵌入第三方分析或追踪工具。',
-        'privacy-sell': '资料出售：我们不出售您的个人资料。',
-        'about-1-title': '1. 网站起源',
-        'about-1-content': '纯粹为了打飞机而生',
-        'about-2-title': '2. 关于打飞机的意义',
-        'about-2-p1': '目前这个时代，"打飞机" 被归纳为是一个很 "低级" 的词汇。甚至恋爱、约炮和嫖娼都比打飞机显得要 "高级"，经常打飞机的人还会被贴上 "Loser" 的标签。',
-        'about-2-p2': '但是打飞机其实是解决性欲成本最低的方式。',
-        'about-2-p3': '你不打飞机，你就得通过恋爱、约炮、或者嫖娼去解决你的性欲，但是这三者无论从时间、精神、或金钱层面去看，成本都远远高于打飞机。所以，打飞机实际上是在以最高效的方式来解决自己的性欲。',
-        'about-2-p4': '"自己自足" 在任何领域都属于 "高级" 的词汇，但是到了 "解决性欲" 这件事情上，自给自足反而成了一个 "低级" 词汇。所以我觉得，目前这个时代，世人对于 "打飞机" 这件事情有着严重的价值错判。',
-        'about-2-p5': 'AI 带来的信息爆炸时代开始逐渐把 "效率主义" 推向主流，而 "打飞机" 这个在 "解决性欲" 领域中最有 "效率" 的解决方案可能会被大家重新正视和定位。',
-        'about-2-p6': '未来会有越来越多的人选择打飞机，整个世界会迎来一次属于打飞机的大牛市，进入全民打飞机的时代。到时候你跟别人说你打飞机，别人会觉得你很时尚，你很高級。',
-        'about-author': '-殺破狼(X:@wolfyxbt)',
+        'about-p1': '这是一个很不必要、但又莫名其妙成立的私人记录工具。',
+        'about-p2': '它不是健康建议，也不是人生指南。',
+        'about-p3': '它只是把一件通常不会被记录的事，做成一个可以记录、统计、截图的小工具。',
+        'about-p4': '这个网站的重点不是鼓励你增加频率，也不是评判你。',
+        'about-p5': '它只做三件事：',
+        'about-li1': '让你记下时间。',
+        'about-li2': '让你看看自己的频率。',
+        'about-li3': '如果你愿意，让你用公开昵称加入本月排行榜。',
+        'about-p6': '私人记录默认保存在本设备。',
+        'about-p7': '只有选择加入排行榜时，才会公开昵称与本月次数。',
+        'about-p8': 'Just for fun.',
+        'about-p9': '但隐私边界要认真。',
+        'terms-intro': '欢迎使用本网站。使用本网站即表示你同意以下条款。',
+        'terms-1-title': '1. 服务说明',
+        'terms-1-content': '本网站提供私人记录与娱乐用途的记录工具。你可以记下时间、查看本机统计，并可选择是否加入本月排行榜。',
+        'terms-2-title': '2. 年龄限制',
+        'terms-2-content': '本网站仅供 18 岁以上用户使用。继续使用本网站，即表示你确认自己已年满 18 岁。',
+        'terms-3-title': '3. 用户责任',
+        'terms-3-content': '你应自行负责使用本网站的行为与输入内容。请勿滥用排行榜、恶意灌水、攻击网站、输入违法内容，或以任何方式干扰服务运行。',
+        'terms-4-title': '4. 隐私与公开资料',
+        'terms-4-content': '私人记录默认保存在本设备。只有在你选择加入排行榜时，公开昵称与本月次数才会显示于排行榜。更多资料处理方式请参阅隐私政策。',
+        'terms-5-title': '5. 非专业建议',
+        'terms-5-content': '本网站仅供私人记录与娱乐用途，不提供医疗、心理、性健康或其他专业建议。如你对身体或心理状态有疑虑，请寻求专业协助。',
+        'terms-6-title': '6. 服务变更与终止',
+        'terms-6-content': '我们可能随时修改、暂停或终止本网站的部分或全部功能，恕不另行通知。',
+        'terms-7-title': '7. 条款修改',
+        'terms-7-content': '我们可能不定期更新本服务条款。更新后的内容会公布于本页面。',
+        'privacy-intro': '本网站的原则是：私人记录默认留在你的设备上。只有你主动选择加入排行榜时，才会公开必要资料。',
+        'privacy-1-title': '1. 本机保存',
+        'privacy-1-content': '本网站会在你的浏览器 localStorage 中保存记录时间、备注（若有）、语言设置、主题设置、排行榜选项，以及年龄确认状态。',
+        'privacy-2-title': '2. Firebase 保存',
+        'privacy-2-content': '只有当你选择加入本月排行榜时，本网站才会向 Firebase 保存公开昵称、月份、本月累计次数与更新时间。如果你使用登录或注册功能，Firebase Authentication 可能会处理你的电子邮件与登录验证资料。',
+        'privacy-3-title': '3. 公开资料',
+        'privacy-3-content': '只有你选择加入排行榜时，公开昵称与本月次数会显示在公开排行榜上。具体记录时间、备注与完整历史不会上传，也不会公开。',
+        'privacy-4-title': '4. 删除本机资料',
+        'privacy-4-content': '你可以通过浏览器清除本网站的 localStorage，移除保存在本机的记录与设置。请注意，清除本机资料不会自动删除已公开的排行榜资料。',
+        'privacy-5-title': '5. 第三方服务',
+        'privacy-5-content': '本网站使用 Firebase 提供排行榜与账号验证功能，并使用 html2canvas 或 canvas 相关工具生成分享图。',
+        'privacy-6-title': '6. 分析与追踪',
+        'privacy-6-content': '本网站目前未嵌入第三方分析工具或广告追踪工具。',
+        'privacy-7-title': '7. 资料出售',
+        'privacy-7-content': '我们不出售你的个人资料。',
         'age-gate-title': '年龄确认',
         'age-gate-line1': '本网站仅供 18 岁以上用户。',
         'age-gate-line2': '作为私人记录与娱乐用途。',
@@ -618,19 +566,6 @@ export const translations = {
         'update-later': '稍后',
         'ok': '确定',
         'time-just-now': '刚刚',
-        'terms-welcome': '欢迎使用本网站。使用本网站即表示您同意遵守以下服务条款：',
-        'terms-1-title': '1. 服务说明',
-        'terms-1-content': '本网站提供个人追踪记录服务，仅供个人使用及娱乐目的。',
-        'terms-2-title': '2. 使用者责任',
-        'terms-2-content': '使用者应确保所提供信息的真实性，并对其使用本网站的行为负责。请适度操作，注意身体健康。',
-        'terms-3-title': '3. 隐私保护',
-        'terms-3-content': '我们重视您的隐私，相关隐私政策请参阅「隐私政策」页面。',
-        'terms-4-title': '4. 免责声明',
-        'terms-4-content': '本网站仅用于个人追踪，只有娱乐价值，不提供其他额外服务。网站不对使用者的任何行为或后果负责。',
-        'terms-5-title': '5. 服务变更',
-        'terms-5-content': '我们保留随时修改或终止服务的权利，恕不另行通知。',
-        'terms-6-title': '6. 条款修改',
-        'terms-6-content': '我们保留随时修改本服务条款的权利，修改后的条款将在网站上公布。'
     }
 };
 
@@ -737,13 +672,7 @@ function updatePageTexts() {
 
     const footerLinks = document.getElementById('footer-links');
     if (footerLinks) {
-        footerLinks.innerHTML = `
-            <a href="#" onclick="openTerms(); return false;" class="footer-link">${texts['terms']}</a>
-            <span style="color: var(--text-muted);"> / </span>
-            <a href="#" onclick="openPrivacy(); return false;" class="footer-link">${texts['privacy']}</a>
-            <span style="color: var(--text-muted);"> / </span>
-            <a href="#" onclick="openAbout(); return false;" class="footer-link">${texts['about']}</a>
-        `;
+        footerLinks.innerHTML = renderFooterLinksHTML(texts);
     }
 
     const themeItems = document.querySelectorAll('#theme-dropdown .dropdown-item span');
@@ -769,36 +698,12 @@ function updatePageTexts() {
     const signupTitle = document.querySelector('#signupModal h3');
     if (signupTitle) signupTitle.textContent = texts['signup-title'];
 
-    const termsModalBody = document.querySelector('#termsModal .modal-body');
-    if (termsModalBody) {
-        termsModalBody.innerHTML = `
-            <p>${texts['terms-welcome']}</p>
-            <p><strong>${texts['terms-1-title']}</strong></p><p>${texts['terms-1-content']}</p>
-            <p><strong>${texts['terms-2-title']}</strong></p><p>${texts['terms-2-content']}</p>
-            <p><strong>${texts['terms-3-title']}</strong></p><p>${texts['terms-3-content']}</p>
-            <p><strong>${texts['terms-4-title']}</strong></p><p>${texts['terms-4-content']}</p>
-            <p><strong>${texts['terms-5-title']}</strong></p><p>${texts['terms-5-content']}</p>
-            <p><strong>${texts['terms-6-title']}</strong></p><p>${texts['terms-6-content']}</p>
-        `;
-    }
-    const termsTitle = document.querySelector('#termsModal h3');
-    if (termsTitle) termsTitle.textContent = texts['terms-title'];
-
-    const privacyModalBody = document.querySelector('#privacyModal .modal-body');
-    if (privacyModalBody) privacyModalBody.innerHTML = renderPrivacyBody(texts);
-    const privacyTitle = document.querySelector('#privacyModal h3');
-    if (privacyTitle) privacyTitle.textContent = texts['privacy-title'];
-
-    const aboutModalBody = document.querySelector('#aboutModal .modal-body');
-    if (aboutModalBody) aboutModalBody.innerHTML = renderAboutBody(texts);
-    const aboutTitle = document.querySelector('#aboutModal h3');
-    if (aboutTitle) aboutTitle.textContent = texts['about-title'];
-
     if (typeof window.renderLocalStats === 'function') window.renderLocalStats();
     if (typeof window.loadLeaderboard === 'function') window.loadLeaderboard();
     if (typeof window.updateSyncAuthUI === 'function') window.updateSyncAuthUI();
     if (typeof window.updateThemeIcons === 'function') window.updateThemeIcons();
     if (typeof window.updateAgeGateLangButtons === 'function') window.updateAgeGateLangButtons(currentLanguage);
+    if (typeof window.updateLegalPageTexts === 'function') window.updateLegalPageTexts();
 }
 
 export function resolveInitialLanguage() {

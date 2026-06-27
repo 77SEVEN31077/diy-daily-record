@@ -6,7 +6,15 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    emptyOutDir: true
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: 'index.html',
+        about: 'about.html',
+        terms: 'terms.html',
+        privacy: 'privacy.html',
+      },
+    },
   },
   server: {
     port: 3000,

@@ -1,7 +1,10 @@
-const CACHE_NAME = 'daily-record-v11';
+const CACHE_NAME = 'daily-record-v12';
 const urlsToCache = [
   '/',
   '/index.html',
+  '/about.html',
+  '/terms.html',
+  '/privacy.html',
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
@@ -58,7 +61,9 @@ self.addEventListener('fetch', (event) => {
   }
   
   // HTML 文件使用網絡優先策略
-  if (url.pathname === '/' || url.pathname === '/index.html') {
+  if (url.pathname === '/' || url.pathname === '/index.html'
+      || url.pathname === '/about.html' || url.pathname === '/terms.html'
+      || url.pathname === '/privacy.html') {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
