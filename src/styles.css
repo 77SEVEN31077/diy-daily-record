@@ -34,6 +34,12 @@
     --border-color: var(--border);
     --highlight: #000000;
     --text-color: var(--text-main);
+    --age-confirm-bg: #111111;
+    --age-confirm-text: #ffffff;
+    --age-confirm-border: #111111;
+    --age-confirm-bg-hover: #000000;
+    --age-confirm-border-hover: #000000;
+    --age-confirm-focus: rgba(17, 17, 17, 0.22);
 }
 
 /* 深色主題 */
@@ -52,6 +58,12 @@
     --border-color: var(--border);
     --highlight: #ffffff;
     --text-color: var(--text-main);
+    --age-confirm-bg: #f2eee7;
+    --age-confirm-text: #0b0b0b;
+    --age-confirm-border: #f2eee7;
+    --age-confirm-bg-hover: #ffffff;
+    --age-confirm-border-hover: #ffffff;
+    --age-confirm-focus: rgba(242, 238, 231, 0.22);
 }
 
 * {
@@ -1115,32 +1127,91 @@ button,
 }
 
 .age-gate-lines {
-    margin-bottom: 0;
+    margin-bottom: 1.5rem;
 }
 
 .age-language-switch {
     display: flex;
     justify-content: center;
     gap: 8px;
-    margin: 1rem 0 1.25rem;
+    margin: 0 0 2rem;
 }
 
-.age-language-switch button {
+.age-language-switch button,
+.age-lang-button {
     min-height: auto;
     padding: 0.35rem 0.6rem;
     font-size: 0.8rem;
     font-weight: 600;
     border-radius: 999px;
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     background: transparent;
     color: var(--text-muted);
     cursor: pointer;
     font-family: inherit;
 }
 
-.age-language-switch button[aria-pressed="true"] {
+.age-language-switch button[aria-pressed="true"],
+.age-lang-button.active {
     color: var(--text-main);
     border-color: var(--border-strong, var(--border));
+    background: rgba(0, 0, 0, 0.03);
+}
+
+:root[data-theme="dark"] .age-language-switch button[aria-pressed="true"],
+:root.dark .age-language-switch button[aria-pressed="true"],
+.dark .age-language-switch button[aria-pressed="true"] {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.age-actions {
+    margin-top: 0;
+}
+
+.age-confirm-button {
+    width: 100%;
+    min-height: 64px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.95rem 1.25rem;
+    margin-top: 0;
+
+    border-radius: 14px;
+    border: 1.5px solid var(--age-confirm-border);
+    background: var(--age-confirm-bg);
+    color: var(--age-confirm-text);
+
+    font-size: 1.08rem;
+    font-weight: 750;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+
+    transition:
+        background-color 160ms ease,
+        border-color 160ms ease,
+        color 160ms ease,
+        transform 120ms ease,
+        box-shadow 160ms ease;
+}
+
+.age-confirm-button:hover {
+    background: var(--age-confirm-bg-hover);
+    border-color: var(--age-confirm-border-hover);
+    opacity: 1;
+}
+
+.age-confirm-button:active {
+    transform: translateY(1px);
+}
+
+.age-confirm-button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--age-confirm-focus);
 }
 
 /* 隱私政策列表 */
@@ -1334,6 +1405,16 @@ button,
 
     .age-title-row h3 {
         font-size: 1.8rem;
+    }
+
+    .age-confirm-button {
+        min-height: 58px;
+        font-size: 1rem;
+        border-radius: 13px;
+    }
+
+    .age-actions {
+        margin-top: 0;
     }
 
     .hero-subtitle {

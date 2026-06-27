@@ -39,11 +39,13 @@
                     <span id="age-gate-line3" class="age-gate-line">繼續使用即表示你已年滿 18 歲。</span>
                 </div>
                 <div class="age-language-switch" id="age-language-switch">
-                    <button type="button" data-lang="en" onclick="selectAgeGateLanguage('en')">EN</button>
-                    <button type="button" data-lang="zh-TW" onclick="selectAgeGateLanguage('zh-TW')">繁</button>
-                    <button type="button" data-lang="zh-CN" onclick="selectAgeGateLanguage('zh-CN')">简</button>
+                    <button type="button" class="age-lang-button" data-lang="en" onclick="selectAgeGateLanguage('en')">EN</button>
+                    <button type="button" class="age-lang-button" data-lang="zh-TW" onclick="selectAgeGateLanguage('zh-TW')">繁</button>
+                    <button type="button" class="age-lang-button" data-lang="zh-CN" onclick="selectAgeGateLanguage('zh-CN')">简</button>
                 </div>
-                <button class="btn" id="age-gate-confirm" onclick="confirmAgeGate()">我已年滿 18 歲</button>
+                <div class="age-actions">
+                    <button type="button" class="age-confirm-button" id="age-gate-confirm" onclick="confirmAgeGate()">我已年滿 18 歲</button>
+                </div>
             </div>
         </div>
     </div>
