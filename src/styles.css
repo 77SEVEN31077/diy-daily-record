@@ -5,6 +5,8 @@
     --highlight: #ffffff;
     --text-color: #ffffff;
     --text-muted: #cccccc;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", "Segoe UI", sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 }
 
 /* 淺色主題 - 使用 class 而不是 data-theme，與參考網站一致 */
@@ -39,7 +41,8 @@
 
 body {
     background-color: var(--bg-color);
-    font-family: 'Courier New', Courier, monospace, sans-serif; /* 仿終端機風格 */
+    font-family: var(--font-sans);
+    line-height: 1.5;
     color: var(--text-color);
     display: flex;
     flex-direction: column;
@@ -254,12 +257,45 @@ h1, h2, .gradient-text {
 }
 
 h1 {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
+    font-weight: 700;
     margin-bottom: 0.5rem;
     letter-spacing: 2px;
 }
 
-h2 {
+.hero-subtitle {
+    font-size: 1.15rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    background: none;
+    -webkit-text-fill-color: var(--text-muted);
+    color: var(--text-muted);
+    opacity: 1;
+}
+
+.hero-description {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.hero-desc-lead {
+    margin-bottom: 0.75rem;
+}
+
+.hero-desc-line {
+    display: block;
+}
+
+@media (max-width: 640px) {
+    h1 {
+        font-size: 1.9rem;
+    }
+}
+
+h2:not(.hero-subtitle) {
     font-size: 1.2rem;
     margin-bottom: 3rem;
     opacity: 0.8;
@@ -268,7 +304,7 @@ h2 {
 
 .container {
     width: 100%;
-    max-width: 500px;
+    max-width: 520px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -290,11 +326,19 @@ h2 {
 
 .section-title {
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    font-weight: 600;
     margin-bottom: 15px;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 5px;
     transition: color 0.3s, border-color 0.3s;
+}
+
+.rank-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: -10px;
+    margin-bottom: 12px;
 }
 
 /* 輸入框樣式 */
@@ -307,10 +351,13 @@ h2 {
 
 label {
     font-size: 0.8rem;
-    color: #666;
+    font-weight: 500;
+    color: var(--text-muted);
 }
 
-input {
+input,
+textarea,
+select {
     background: var(--input-bg);
     border: 1px solid var(--border-color);
     color: var(--text-color);
@@ -319,6 +366,17 @@ input {
     font-size: 1rem;
     outline: none;
     transition: border-color 0.3s, background-color 0.3s, color 0.3s;
+}
+
+.stat-value,
+.history-item,
+.rank-item,
+input[type="datetime-local"],
+.share-stat-row,
+.share-card,
+.leaderboard-count,
+.record-time {
+    font-family: var(--font-mono);
 }
 
 input:focus {
@@ -332,7 +390,8 @@ input:focus {
     border: none;
     padding: 12px;
     border-radius: 4px;
-    font-weight: bold;
+    font-size: 0.95rem;
+    font-weight: 700;
     cursor: pointer;
     transition: opacity 0.3s;
     width: 100%;
@@ -531,10 +590,15 @@ input:focus {
 }
 
 /* 免責聲明 */
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
 .footer {
     margin-top: 50px;
     text-align: center;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: #444;
     max-width: 400px;
     line-height: 1.5;
@@ -586,7 +650,7 @@ input:focus {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 30px;
-    max-width: 500px;
+    max-width: 560px;
     width: 90%;
     position: absolute;
     top: 50%;
@@ -618,8 +682,18 @@ input:focus {
     transition: color 0.3s;
 }
 
+.modal-body,
+.privacy-list li {
+    line-height: 1.65;
+}
+
 .modal-body p {
     margin-bottom: 15px;
+}
+
+.sync-description,
+.hero-description {
+    line-height: 1.65;
 }
 
 .close {
@@ -642,21 +716,27 @@ input:focus {
     margin-bottom: 24px;
 }
 
-.hero h2 {
-    font-size: 1.1rem;
-    font-weight: normal;
-    color: var(--text-muted);
-    margin-top: 8px;
+.sync-description .sync-desc-line {
+    display: block;
 }
 
-.hero-description {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    line-height: 1.6;
+.age-gate-line {
+    display: block;
+}
+
+.share-msg {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-color);
     margin-top: 12px;
-    max-width: 520px;
-    margin-left: auto;
-    margin-right: auto;
+    min-height: 1.5em;
+}
+
+.btn-share-download {
+    background: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    margin-top: 10px;
 }
 
 /* 本地統計 */
@@ -685,12 +765,6 @@ input:focus {
     font-size: 0.75rem;
     color: var(--text-muted);
     margin-bottom: 6px;
-}
-
-.stat-value {
-    font-size: 1.1rem;
-    color: var(--text-color);
-    font-weight: 600;
 }
 
 .recent-title {
@@ -781,6 +855,10 @@ input:focus {
     padding: 24px;
 }
 
+.share-card {
+    font-family: var(--font-mono);
+}
+
 .share-capture-title {
     text-align: center;
     margin-bottom: 20px;
@@ -797,9 +875,16 @@ input:focus {
 
 .share-footer {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 12px;
     font-size: 0.75rem;
     color: #888;
+}
+
+.share-card-caption {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 0.85rem;
+    color: #aaa;
 }
 
 /* 年齡確認 */

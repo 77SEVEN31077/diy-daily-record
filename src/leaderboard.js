@@ -53,7 +53,7 @@ window.loadLeaderboard = async function() {
                 const highlight = isMe ? 'border-bottom: 1px solid var(--highlight);' : '';
                 const isTop3 = index < 3 ? 'top-3' : '';
                 const safeName = escapeHtml(user.name);
-                return `<li class="rank-item"><span style="${highlight}"><span class="rank-badge ${isTop3}">#${index + 1}</span>${safeName}${isMe ? ` ${t.you || '(你)'}` : ''}</span><span>${user.count} ${t.times || '次'}</span></li>`;
+                return `<li class="rank-item"><span style="${highlight}"><span class="rank-badge ${isTop3}">#${index + 1}</span>${safeName}${isMe ? ` ${t.you || '(你)'}` : ''}</span><span class="leaderboard-count">${user.count} ${t.times || '次'}</span></li>`;
             }).join('');
         }
     } catch (e) {

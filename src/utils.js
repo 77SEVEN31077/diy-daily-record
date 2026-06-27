@@ -20,54 +20,80 @@ window.confirmAgeGate = function() {
     if (modal) modal.style.display = 'none';
 };
 
-// 分享與截圖功能（不含具體紀錄時間）
+// 分享與截圖功能（兩段式：先生成 → 顯示提示 → 使用者點下載）
+let pendingShareImageDataUrl = null;
+
 export async function shareStats() {
     const captureArea = document.getElementById('share-capture-area');
     const shareMsg = document.getElementById('share-msg');
-    const shareBtn = document.querySelector('.btn-share');
+    const shareBtn = document.getElementById('share-generate-btn') || document.querySelector('.btn-share');
+    const downloadBtn = document.getElementById('share-download-btn');
     const texts = window.getTexts ? window.getTexts() : translations['zh-TW'];
 
     if (typeof window.updateShareCaptureArea === 'function') {
         window.updateShareCaptureArea();
     }
 
-    shareBtn.innerText = texts['loading'] || '生成截圖中...';
-    try {
-        const url = window.location.href;
-        const shareText = texts['share-text'] ? `${texts['share-text']} ${url}` : `${url}`;
-        try { await navigator.clipboard.writeText(shareText); } catch (_) { /* clipboard optional */ }
+    if (shareBtn) {
+        shareBtn.disabled = true;
+        shareBtn.innerText = texts['loading'] || '載入中...';
+    }
+    if (shareMsg) shareMsg.style.display = 'none';
+    if (downloadBtn) downloadBtn.style.display = 'none';
+    pendingShareImageDataUrl = null;
 
+    try {
         captureArea.style.display = 'block';
         captureArea.style.position = 'fixed';
         captureArea.style.left = '0';
         captureArea.style.top = '0';
         captureArea.style.zIndex = '-1';
+
         const canvas = await html2canvas(captureArea, {
             backgroundColor: '#000000',
             scale: 2
         });
+
         captureArea.style.display = '';
         captureArea.style.position = '';
         captureArea.style.left = '';
         captureArea.style.top = '';
         captureArea.style.zIndex = '';
 
-        const link = document.createElement('a');
-        link.download = `daily-record-${Date.now()}.jpg`;
-        link.href = canvas.toDataURL('image/jpeg', 0.9);
-        link.click();
+        pendingShareImageDataUrl = canvas.toDataURL('image/jpeg', 0.9);
 
-        shareBtn.innerText = texts['share-btn'];
         if (shareMsg) {
-            shareMsg.innerText = texts['share-success'];
+            shareMsg.innerText = texts['share-success'] || '戰績圖已生成。';
             shareMsg.style.display = 'block';
+        }
+        if (downloadBtn) {
+            downloadBtn.textContent = texts['share-download-btn'] || '下載圖片';
+            downloadBtn.style.display = 'block';
         }
     } catch (err) {
         console.error(err);
         alert(texts['share-failed'] || '分享失敗，請手動截圖');
-        shareBtn.innerText = texts['share-btn'];
+    } finally {
+        if (shareBtn) {
+            shareBtn.disabled = false;
+            shareBtn.innerText = texts['share-btn'] || '生成戰績圖';
+        }
     }
 }
+
+window.downloadShareImage = function() {
+    if (!pendingShareImageDataUrl) return;
+    const texts = window.getTexts ? window.getTexts() : translations['zh-TW'];
+    const link = document.createElement('a');
+    link.download = `daily-record-${Date.now()}.jpg`;
+    link.href = pendingShareImageDataUrl;
+    link.click();
+    const shareMsg = document.getElementById('share-msg');
+    if (shareMsg && texts['share-success']) {
+        shareMsg.innerText = texts['share-success'];
+        shareMsg.style.display = 'block';
+    }
+};
 
 // 模態框管理
 window.openTerms = function() {
@@ -196,28 +222,33 @@ export const translations = {
     'zh-TW': {
         'title': '打飛機紀錄',
         'subtitle': '私密紀錄，不評判。',
-        'hero-description': '不需要登入。私人紀錄保存在本機。只有選擇加入排行榜時才公開暱稱與本月次數。',
-        'record-title': '記錄這一次',
+        'hero-desc-lead': '記下時間，看看頻率，順便面對一下自己。',
+        'hero-desc-line1': '不需要登入。',
+        'hero-desc-line2': '私人紀錄保存在本機。',
+        'hero-desc-line3': '只有選擇加入排行榜時，才會公開暱稱與本月次數。',
+        'record-title': '新增紀錄',
         'time-label': '時間',
         'note-label': '備註（可選）',
-        'note-placeholder': '僅保存在本機，不會上傳',
+        'note-placeholder': '只保存在本設備，可寫可不寫。',
         'join-leaderboard-label': '加入本月排行榜',
         'public-nickname-label': '公開暱稱',
         'public-nickname-placeholder': '1-24 字元',
         'optin-hint': '只公開暱稱與本月次數，不公開具體時間。',
         'confirm-btn': '記錄這一次',
-        'stats-section-title': '本地統計',
+        'stats-section-title': '目前統計',
         'stat-since': '距離上次',
         'stat-monthly': '本月次數',
         'stat-avg': '平均間隔',
         'stat-longest': '最長間隔',
         'recent-title': '最近 10 筆',
-        'history-empty': '尚無紀錄',
-        'rank-title': '本月排行榜 (Top 30)',
+        'history-empty': '尚無紀錄。這裡目前很乾淨。',
+        'rank-title': '本月排行榜',
+        'rank-subtitle': 'Top 30',
         'loading': '載入中...',
-        'share-btn': '分享統計 📸',
-        'share-success': '截圖已生成！',
-        'share-text': '我的統計在這裡～',
+        'share-btn': '生成戰績圖',
+        'share-success': '戰績圖已生成。',
+        'share-download-btn': '下載圖片',
+        'share-card-caption': '截圖已生成！',
         'share-generated-by': 'Generated by 打飛機紀錄',
         'no-records': '本月尚無紀錄',
         'load-failed': '排行榜載入失敗',
@@ -232,7 +263,9 @@ export const translations = {
         'alert-leaderboard-failed': '本機已保存，但排行榜同步失敗，請稍後再試。',
         'share-failed': '分享失敗，請手動截圖',
         'sync-section-title': '跨裝置同步',
-        'sync-description': '進階功能：註冊帳號以便未來跨裝置同步（開發中）。不登入也能完整使用本機紀錄。',
+        'sync-desc-line1': '進階功能，開發中。',
+        'sync-desc-line2': '不登入也能完整使用本機紀錄。',
+        'sync-desc-line3': '需要跨裝置保存時，再考慮註冊。',
         'login': '登入',
         'signup': '註冊',
         'logout': '登出',
@@ -260,7 +293,9 @@ export const translations = {
         'about-2-p6': '未來會有越來越多的人選擇打飛機，整個世界會迎來一次屬於打飛機的大牛市，進入全民打飛機的時代。到時候你跟別人說你打飛機，別人會覺得你很時尚，你很高級。',
         'about-author': '-殺破狼(X:@wolfyxbt)',
         'age-gate-title': '年齡確認',
-        'age-gate-text': '本網站內容僅限 18 歲以上使用者。繼續使用即表示您已年滿 18 歲。',
+        'age-gate-line1': '本網站僅供 18 歲以上使用者。',
+        'age-gate-line2': '作為私人紀錄與娛樂用途。',
+        'age-gate-line3': '繼續使用即表示你已年滿 18 歲。',
         'age-gate-confirm': '我已年滿 18 歲',
         'login-title': '登入',
         'signup-title': '註冊',
@@ -320,31 +355,36 @@ export const translations = {
         'terms-6-content': '我們保留隨時修改本服務條款的權利，修改後的條款將在網站上公布。'
     },
     'en': {
-        'title': 'DIY Record',
-        'subtitle': 'Private records. No judgment.',
-        'hero-description': 'No login required. Private records stay on your device. Only your nickname and monthly count are public if you opt into the leaderboard.',
-        'record-title': 'Record This Time',
+        'title': 'DIY Daily Record',
+        'subtitle': 'Private tracking. No judgment.',
+        'hero-desc-lead': 'Log the time, check the pattern, and face yourself a little.',
+        'hero-desc-line1': 'No account required.',
+        'hero-desc-line2': 'Private records stay on this device.',
+        'hero-desc-line3': 'Only when you choose to join the leaderboard will your nickname and monthly count be public.',
+        'record-title': 'New Record',
         'time-label': 'Time',
         'note-label': 'Note (optional)',
-        'note-placeholder': 'Saved locally only, never uploaded',
-        'join-leaderboard-label': 'Join this month\'s leaderboard',
+        'note-placeholder': 'Saved only on this device. Write it or skip it.',
+        'join-leaderboard-label': "Join this month's leaderboard",
         'public-nickname-label': 'Public nickname',
         'public-nickname-placeholder': '1-24 characters',
-        'optin-hint': 'Only nickname and monthly count are public. Specific times are not shared.',
-        'confirm-btn': 'Record This Time',
-        'stats-section-title': 'Local Stats',
-        'stat-since': 'Since last',
+        'optin-hint': 'Only your nickname and monthly count are public. Exact times are not shown.',
+        'confirm-btn': 'Log this one',
+        'stats-section-title': 'Current Stats',
+        'stat-since': 'Time since last',
         'stat-monthly': 'This month',
-        'stat-avg': 'Avg interval',
+        'stat-avg': 'Average interval',
         'stat-longest': 'Longest gap',
-        'recent-title': 'Last 10 records',
-        'history-empty': 'No records yet',
-        'rank-title': 'Leaderboard (Top 30)',
+        'recent-title': 'Latest 10 records',
+        'history-empty': 'No records yet. This place is still clean.',
+        'rank-title': 'Monthly Leaderboard',
+        'rank-subtitle': 'Top 30',
         'loading': 'Loading...',
-        'share-btn': 'Share Stats 📸',
-        'share-success': 'Screenshot saved!',
-        'share-text': 'My stats here ~',
-        'share-generated-by': 'Generated by DIY Record',
+        'share-btn': 'Generate Battle Card',
+        'share-success': 'Battle card generated.',
+        'share-download-btn': 'Download image',
+        'share-card-caption': 'Screenshot ready!',
+        'share-generated-by': 'Generated by DIY Daily Record',
         'no-records': 'No entries this month',
         'load-failed': 'Failed to load leaderboard',
         'times': 'times',
@@ -357,10 +397,12 @@ export const translations = {
         'alert-success': 'Recorded!',
         'alert-leaderboard-failed': 'Saved locally, but leaderboard sync failed. Try again later.',
         'share-failed': 'Share failed, please screenshot manually',
-        'sync-section-title': 'Cross-Device Sync',
-        'sync-description': 'Advanced: create an account for future cross-device sync (in development). Full local tracking works without login.',
-        'login': 'Sign In',
-        'signup': 'Sign Up',
+        'sync-section-title': 'Cross-device sync',
+        'sync-desc-line1': 'Advanced feature, in development.',
+        'sync-desc-line2': 'You can fully use local records without logging in.',
+        'sync-desc-line3': 'Register only if you need cross-device saving.',
+        'login': 'Log in',
+        'signup': 'Sign up',
         'logout': 'Sign Out',
         'terms': 'Terms',
         'privacy': 'Privacy',
@@ -385,9 +427,11 @@ export const translations = {
         'about-2-p5': 'Track quietly. Share lightly if you want.',
         'about-2-p6': 'Your data, your rules.',
         'about-author': '',
-        'age-gate-title': 'Age Verification',
-        'age-gate-text': 'This site is for users 18+. By continuing, you confirm you are at least 18.',
-        'age-gate-confirm': 'I am 18 or older',
+        'age-gate-title': 'Age Confirmation',
+        'age-gate-line1': 'This site is for users 18+ only.',
+        'age-gate-line2': 'For private logging and entertainment purposes.',
+        'age-gate-line3': 'By continuing, you confirm that you are 18+.',
+        'age-gate-confirm': 'I am 18+',
         'login-title': 'Sign In',
         'signup-title': 'Sign Up',
         'email': 'Email',
@@ -448,28 +492,33 @@ export const translations = {
     'zh-CN': {
         'title': '打飞机记录',
         'subtitle': '私密记录，不评判。',
-        'hero-description': '不需要登录。私人记录保存在本机。只有选择加入排行榜时才公开昵称与本月次数。',
-        'record-title': '记录这一次',
+        'hero-desc-lead': '记下时间，看看频率，顺便面对一下自己。',
+        'hero-desc-line1': '不需要登录。',
+        'hero-desc-line2': '私人记录保存在本机。',
+        'hero-desc-line3': '只有选择加入排行榜时，才会公开昵称与本月次数。',
+        'record-title': '新增记录',
         'time-label': '时间',
         'note-label': '备注（可选）',
-        'note-placeholder': '仅保存在本机，不会上传',
+        'note-placeholder': '只保存在本设备，可写可不写。',
         'join-leaderboard-label': '加入本月排行榜',
         'public-nickname-label': '公开昵称',
         'public-nickname-placeholder': '1-24 字符',
         'optin-hint': '只公开昵称与本月次数，不公开具体时间。',
         'confirm-btn': '记录这一次',
-        'stats-section-title': '本地统计',
+        'stats-section-title': '目前统计',
         'stat-since': '距离上次',
         'stat-monthly': '本月次数',
         'stat-avg': '平均间隔',
         'stat-longest': '最长间隔',
         'recent-title': '最近 10 笔',
-        'history-empty': '尚无记录',
-        'rank-title': '本月排行榜 (Top 30)',
+        'history-empty': '暂无记录。这里目前很干净。',
+        'rank-title': '本月排行榜',
+        'rank-subtitle': 'Top 30',
         'loading': '加载中...',
-        'share-btn': '分享统计 📸',
-        'share-success': '截图已生成！',
-        'share-text': '我的统计在这里～',
+        'share-btn': '生成战绩图',
+        'share-success': '战绩图已生成。',
+        'share-download-btn': '下载图片',
+        'share-card-caption': '截图已生成！',
         'share-generated-by': 'Generated by 打飞机记录',
         'no-records': '本月尚无记录',
         'load-failed': '排行榜加载失败',
@@ -484,7 +533,9 @@ export const translations = {
         'alert-leaderboard-failed': '本机已保存，但排行榜同步失败，请稍后再试。',
         'share-failed': '分享失败，请手动截图',
         'sync-section-title': '跨设备同步',
-        'sync-description': '进阶功能：注册账号以便未来跨设备同步（开发中）。不登录也能完整使用本机记录。',
+        'sync-desc-line1': '进阶功能，开发中。',
+        'sync-desc-line2': '不登录也能完整使用本机记录。',
+        'sync-desc-line3': '需要跨设备保存时，再考虑注册。',
         'login': '登录',
         'signup': '注册',
         'logout': '登出',
@@ -512,7 +563,9 @@ export const translations = {
         'about-2-p6': '未来会有越来越多的人选择打飞机，整个世界会迎来一次属于打飞机的大牛市，进入全民打飞机的时代。到时候你跟别人说你打飞机，别人会觉得你很时尚，你很高級。',
         'about-author': '-殺破狼(X:@wolfyxbt)',
         'age-gate-title': '年龄确认',
-        'age-gate-text': '本网站内容仅限 18 岁以上使用者。继续使用即表示您已年满 18 岁。',
+        'age-gate-line1': '本网站仅供 18 岁以上用户。',
+        'age-gate-line2': '作为私人记录与娱乐用途。',
+        'age-gate-line3': '继续使用即表示你已年满 18 岁。',
         'age-gate-confirm': '我已年满 18 岁',
         'login-title': '登录',
         'signup-title': '注册',
@@ -624,11 +677,20 @@ function updatePageTexts() {
     setText('recent-title', 'recent-title');
     setText('history-empty', 'history-empty');
     setText('rank-section-title', 'rank-title');
+    setText('rank-subtitle', 'rank-subtitle');
     setText('sync-section-title', 'sync-section-title');
-    setText('sync-description', 'sync-description');
     setText('age-gate-title', 'age-gate-title');
-    setText('age-gate-text', 'age-gate-text');
+    setText('age-gate-line1', 'age-gate-line1');
+    setText('age-gate-line2', 'age-gate-line2');
+    setText('age-gate-line3', 'age-gate-line3');
     setText('age-gate-confirm', 'age-gate-confirm');
+    setText('hero-desc-lead', 'hero-desc-lead');
+    setText('hero-desc-line1', 'hero-desc-line1');
+    setText('hero-desc-line2', 'hero-desc-line2');
+    setText('hero-desc-line3', 'hero-desc-line3');
+    setText('sync-desc-line1', 'sync-desc-line1');
+    setText('sync-desc-line2', 'sync-desc-line2');
+    setText('sync-desc-line3', 'sync-desc-line3');
 
     const navTitle = document.querySelector('.nav-left a');
     if (navTitle) navTitle.textContent = texts['title'];
@@ -636,11 +698,19 @@ function updatePageTexts() {
     const h1 = document.querySelector('h1');
     if (h1) h1.textContent = texts['title'];
 
-    const h2 = document.querySelector('.hero h2');
+    const h2 = document.querySelector('.hero-subtitle');
     if (h2) h2.textContent = texts['subtitle'];
 
-    const heroDesc = document.querySelector('.hero-description');
-    if (heroDesc) heroDesc.textContent = texts['hero-description'];
+    const shareBtn = document.getElementById('share-generate-btn') || document.querySelector('.btn-share');
+    if (shareBtn) shareBtn.textContent = texts['share-btn'];
+
+    const downloadBtn = document.getElementById('share-download-btn');
+    if (downloadBtn && downloadBtn.style.display !== 'none') {
+        downloadBtn.textContent = texts['share-download-btn'] || '下載圖片';
+    }
+
+    const shareCardCaption = document.getElementById('share-card-caption');
+    if (shareCardCaption) shareCardCaption.textContent = texts['share-card-caption'] || '';
 
     const noteInput = document.getElementById('record-note');
     if (noteInput) noteInput.placeholder = texts['note-placeholder'];
@@ -654,8 +724,10 @@ function updatePageTexts() {
     const confirmBtn = document.querySelector('.btn[onclick="addRecord()"]');
     if (confirmBtn) confirmBtn.textContent = texts['confirm-btn'];
 
-    const shareBtn = document.querySelector('.btn-share');
-    if (shareBtn) shareBtn.textContent = texts['share-btn'];
+    const shareMsg = document.getElementById('share-msg');
+    if (shareMsg && shareMsg.style.display !== 'none' && texts['share-success']) {
+        shareMsg.innerText = texts['share-success'];
+    }
 
     const footerLinks = document.getElementById('footer-links');
     if (footerLinks) {
