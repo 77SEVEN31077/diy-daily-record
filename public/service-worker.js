@@ -1,4 +1,4 @@
-const CACHE_NAME = 'daily-record-v4';
+const CACHE_NAME = 'daily-record-v5';
 const urlsToCache = [
   '/',
   '/index.html',

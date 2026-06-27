@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy:firebase": "npm run build && firebase deploy",
+    "//deploy:firebase": "已停用：本專案前端僅部署至 Vercel，Firebase 不作 Hosting。請勿使用 firebase deploy。",
     "deploy:vercel": "npm run build && vercel --prod"
   },
   "keywords": [

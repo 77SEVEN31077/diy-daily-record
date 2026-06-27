@@ -6,14 +6,27 @@
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="日常紀錄">
-    <title>打飛機紀錄 - 今天來一發？</title>
+    <meta name="apple-mobile-web-app-title" content="Daily Record">
+    <title>打飛機紀錄 - 私密紀錄，不評判</title>
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/icon-192.png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script type="module" src="/src/main.js"></script>
 </head>
 <body>
+
+    <!-- 18+ 年齡確認 -->
+    <div id="ageGateModal" class="modal age-gate-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="age-gate-title">年齡確認</h3>
+            </div>
+            <div class="modal-body">
+                <p id="age-gate-text">本網站內容僅限 18 歲以上使用者。繼續使用即表示您已年滿 18 歲。</p>
+                <button class="btn" id="age-gate-confirm" onclick="confirmAgeGate()">我已年滿 18 歲</button>
+            </div>
+        </div>
+    </div>
 
     <!-- 頂部導航欄 -->
     <nav class="top-nav">
@@ -22,7 +35,6 @@
                 <a href="/">打飛機紀錄</a>
             </div>
             <div class="nav-right">
-                <!-- 語言切換下拉菜單 -->
                 <div class="dropdown">
                     <button class="nav-btn nav-btn-language" type="button" id="language-toggle-btn" aria-haspopup="menu" aria-expanded="false" onclick="toggleLanguageDropdown(event)">
                         <svg class="nav-btn-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -58,7 +70,6 @@
                         </a>
                     </div>
                 </div>
-                <!-- 主題切換下拉菜單 -->
                 <div class="dropdown">
                     <button class="nav-btn nav-btn-theme" type="button" id="theme-toggle-btn" aria-haspopup="menu" aria-expanded="false" onclick="toggleThemeDropdown(event)">
                         <svg class="nav-btn-icon" id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -103,77 +114,99 @@
                         </a>
                     </div>
                 </div>
-                <div class="nav-buttons-group">
-                    <a href="#" class="nav-link nav-link-signin" onclick="openLogin(); return false;">登入</a>
-                    <a href="#" class="nav-link nav-link-signup" onclick="openSignup(); return false;">註冊</a>
-                </div>
             </div>
         </div>
     </nav>
 
-    <div class="container" id="capture-area" style="padding: 20px; margin-top: 0;">
-        <header>
+    <div class="container" style="padding: 20px; margin-top: 0;">
+        <header class="hero">
             <h1>打飛機紀錄</h1>
-            <h2>今天來一發？</h2>
+            <h2>私密紀錄，不評判。</h2>
+            <p class="hero-description">不需要登入。私人紀錄保存在本機。只有選擇加入排行榜時才公開暱稱與本月次數。</p>
         </header>
 
-        <div class="section-box">
-            <div class="section-title">記下你的每一次</div>
+        <!-- 記錄表單 -->
+        <div class="section-box" id="record-section">
+            <div class="section-title" id="record-section-title">記錄這一次</div>
             <div class="form-group">
-                <label>你的暱稱</label>
-                <input type="text" id="nickname" placeholder="輸入你的暱稱...">
-            </div>
-            <div class="form-group">
-                <label>時間</label>
+                <label for="record-time" id="time-label">時間</label>
                 <input type="datetime-local" id="record-time">
             </div>
-            <button class="btn" onclick="addRecord()">確認紀錄</button>
+            <div class="form-group">
+                <label for="record-note" id="note-label">備註（可選）</label>
+                <input type="text" id="record-note" maxlength="200" placeholder="僅保存在本機，不會上傳">
+            </div>
+            <div class="leaderboard-optin">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="join-leaderboard">
+                    <span id="join-leaderboard-label">加入本月排行榜</span>
+                </label>
+                <div class="form-group optin-nickname" id="optin-nickname-group" style="display:none;">
+                    <label for="public-nickname" id="public-nickname-label">公開暱稱</label>
+                    <input type="text" id="public-nickname" maxlength="24" placeholder="1-24 字元">
+                </div>
+                <p class="optin-hint" id="optin-hint">只公開暱稱與本月次數，不公開具體時間。</p>
+            </div>
+            <button class="btn" onclick="addRecord()">記錄這一次</button>
         </div>
 
-        <div class="section-box" id="history-section" style="display:none;">
-            <div class="section-title">你的近期戰績</div>
-            <ul class="history-list" id="history-list">
-                </ul>
+        <!-- 本地統計 -->
+        <div class="section-box" id="stats-section">
+            <div class="section-title" id="stats-section-title">本地統計</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label" id="stat-since-label">距離上次</div>
+                    <div class="stat-value" id="stat-since-value">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label" id="stat-monthly-label">本月次數</div>
+                    <div class="stat-value" id="stat-monthly-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label" id="stat-avg-label">平均間隔</div>
+                    <div class="stat-value" id="stat-avg-value">—</div>
+                </div>
+            </div>
+            <div class="recent-records">
+                <div class="recent-title" id="recent-title">最近 10 筆</div>
+                <ul class="history-list" id="history-list"></ul>
+                <p class="empty-hint" id="history-empty" style="display:none;">尚無紀錄</p>
+            </div>
         </div>
 
+        <!-- 排行榜 -->
         <div class="section-box">
-            <div class="section-title">本月打槍王 (Top 30)</div>
+            <div class="section-title" id="rank-section-title">本月排行榜 (Top 30)</div>
             <ul class="rank-list" id="rank-list">
                 <li class="rank-item" style="justify-content: center; color: #444;">載入中...</li>
             </ul>
         </div>
 
+        <!-- 分享 -->
         <div class="section-box no-capture">
-            <button class="btn btn-share" onclick="shareStats()">分享你的戰績 📸</button>
-            <p id="share-msg" style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 10px; display: none;">截圖已生成，連結已複製！</p>
+            <button class="btn btn-share" onclick="shareStats()">分享統計 📸</button>
+            <p id="share-msg" style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 10px; display: none;"></p>
         </div>
 
-        <!-- 留言板區塊（僅登入用戶可見） -->
-        <div class="section-box messages-section" id="messages-section">
-            <div class="section-title" id="messages-title">留言板</div>
-            
-            <!-- 留言輸入表單 -->
-            <div class="message-form">
-                <textarea 
-                    id="message-input" 
-                    class="message-input" 
-                    placeholder="輸入你的留言..."
-                    rows="3"
-                    maxlength="500"
-                ></textarea>
-                <button class="btn message-submit-btn" onclick="submitMessage()">發送留言</button>
-                <p id="message-error" style="color: #ff4444; font-size: 0.85rem; margin-top: 8px; display: none;"></p>
+        <!-- 跨裝置同步（進階） -->
+        <div class="section-box sync-section no-capture" id="sync-section">
+            <div class="section-title" id="sync-section-title">跨裝置同步</div>
+            <p class="sync-description" id="sync-description">進階功能：註冊帳號以便未來跨裝置同步（開發中）。不登入也能完整使用本機紀錄。</p>
+            <div class="sync-actions" id="sync-actions">
+                <a href="#" class="nav-link nav-link-signin" onclick="openLogin(); return false;">登入</a>
+                <a href="#" class="nav-link nav-link-signup" onclick="openSignup(); return false;">註冊</a>
             </div>
+        </div>
+    </div>
 
-            <!-- 留言列表 -->
-            <ul class="messages-list" id="messages-list">
-                <li class="message-empty">載入中...</li>
-            </ul>
-
-            <!-- 載入更多按鈕 -->
-            <div class="message-load-more" id="load-more-container" style="display: none;">
-                <button class="message-load-more-btn" onclick="loadMoreMessages()">載入更多</button>
-            </div>
+    <!-- 分享截圖專用區（不含具體時間） -->
+    <div id="share-capture-area" class="share-capture-area" aria-hidden="true">
+        <div class="share-capture-inner">
+            <h2 class="share-capture-title">打飛機紀錄</h2>
+            <div class="share-stat-row"><span id="share-label-monthly">本月次數</span><span id="share-value-monthly">0</span></div>
+            <div class="share-stat-row"><span id="share-label-since">距離上次</span><span id="share-value-since">—</span></div>
+            <div class="share-stat-row"><span id="share-label-longest">最長間隔</span><span id="share-value-longest">—</span></div>
+            <p class="share-footer" id="share-generated-by">Generated by 打飛機紀錄</p>
         </div>
     </div>
 
@@ -186,7 +219,13 @@
                 </svg>
             </a>
         </div>
-        使用此網站即表示您同意<a href="#" onclick="openTerms(); return false;" class="footer-link">服務條款</a>並已閱讀<a href="#" onclick="openPrivacy(); return false;" class="footer-link">隱私政策</a>
+        <span id="footer-links">
+            <a href="#" onclick="openTerms(); return false;" class="footer-link">服務條款</a>
+            <span style="color: var(--text-muted);"> / </span>
+            <a href="#" onclick="openPrivacy(); return false;" class="footer-link">隱私政策</a>
+            <span style="color: var(--text-muted);"> / </span>
+            <a href="#" onclick="openAbout(); return false;" class="footer-link">關於</a>
+        </span>
     </footer>
 
     <!-- 服務條款模態框 -->
@@ -196,27 +235,7 @@
                 <span class="close" onclick="closeTerms()">&times;</span>
                 <h3>服務條款</h3>
             </div>
-            <div class="modal-body">
-                <p>歡迎使用本網站。使用本網站即表示您同意遵守以下服務條款：</p>
-                
-                <p><strong>1. 服務說明</strong></p>
-                <p>本網站提供個人追蹤記錄服務，僅供個人使用及娛樂目的。</p>
-                
-                <p><strong>2. 使用者責任</strong></p>
-                <p>使用者應確保所提供資訊的真實性，並對其使用本網站的行為負責。請適度操作，注意身體健康。</p>
-                
-                <p><strong>3. 隱私保護</strong></p>
-                <p>我們重視您的隱私，相關隱私政策請參閱「隱私政策」頁面。</p>
-                
-                <p><strong>4. 免責聲明</strong></p>
-                <p>本網站僅用於個人追蹤，只有娛樂價值，不提供其他額外服務。網站不對使用者的任何行為或後果負責。</p>
-                
-                <p><strong>5. 服務變更</strong></p>
-                <p>我們保留隨時修改或終止服務的權利，恕不另行通知。</p>
-                
-                <p><strong>6. 條款修改</strong></p>
-                <p>我們保留隨時修改本服務條款的權利，修改後的條款將在網站上公布。</p>
-            </div>
+            <div class="modal-body"></div>
         </div>
     </div>
 
@@ -227,25 +246,18 @@
                 <span class="close" onclick="closePrivacy()">&times;</span>
                 <h3>隱私政策</h3>
             </div>
-            <div class="modal-body">
-                <p><strong>1. 網站起源</strong></p>
-                <p>純粹為了打飛機而生</p>
-                
-                <p><strong>2. 關於打飛機的意義</strong></p>
-                <p>目前這個時代，"打飛機" 被歸納為是一個很 "低級" 的詞彙。甚至戀愛、約炮和嫖娼都比打飛機顯得要 "高級"，經常打飛機的人還會被貼上 "Loser" 的標籤。</p>
-                
-                <p>但是打飛機其實是解決性慾成本最低的方式。</p>
-                
-                <p>你不打飛機，你就得通過戀愛、約炮、或者嫖娼去解決你的性慾，但是這三者無論是從時間、精神、或金錢層面去看，成本都遠遠高於打飛機。所以，打飛機實際上是在以最高效的方式來解決自己的性慾。</p>
-                
-                <p>"自己自足" 在任何領域都屬於 "高級" 的詞彙，但是到了 "解決性慾" 這件事情上，自給自足反而成了一個 "低級" 詞彙。所以我覺得，目前這個時代，世人對於 "打飛機" 這件事情有著嚴重的價值錯判。</p>
-                
-                <p>AI 帶來的信息爆炸時代開始逐漸把 "效率主義" 推向主流，而 "打飛機" 這個在 "解決性慾" 領域中最有 "效率" 的解決方案可能會被大家重新正視和定位。</p>
-                
-                <p>未來會有越來越多的人選擇打飛機，整個世界會迎來一次屬於打飛機的大牛市，進入全民打飛機的時代。到時候你跟別人說你打飛機，別人會覺得你很時尚，你很高級。</p>
-                
-                <p style="text-align: right; margin-top: 20px; color: #888;">-殺破狼(X:@wolfyxbt)</p>
+            <div class="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- 關於 / 宣言模態框 -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeAbout()">&times;</span>
+                <h3>關於</h3>
             </div>
+            <div class="modal-body"></div>
         </div>
     </div>
 

@@ -28,7 +28,7 @@ window.handleLogin = async function(event) {
         } else if (error.code === 'auth/invalid-email') {
             errorDiv.textContent = texts['error-invalid-email'] || '電子郵件格式不正確。';
         } else {
-            errorDiv.textContent = (texts['error-login-failed'] || '登入失敗：') + error.message;
+            errorDiv.textContent = texts['error-login-failed'] || texts['error-generic'] || '登入失敗，請稍後再試。';
         }
     } finally {
         loginBtn.disabled = false;
@@ -79,7 +79,7 @@ window.handleSignup = async function(event) {
         } else if (error.code === 'auth/weak-password') {
             errorDiv.textContent = texts['error-weak-password'] || '密碼強度不足，請使用更複雜的密碼。';
         } else {
-            errorDiv.textContent = (texts['error-signup-failed'] || '註冊失敗：') + error.message;
+            errorDiv.textContent = texts['error-signup-failed'] || texts['error-generic'] || '註冊失敗，請稍後再試。';
         }
     } finally {
         signupBtn.disabled = false;
@@ -94,40 +94,34 @@ window.handleLogout = async function() {
         await signOut(auth);
         alert(texts['logout-success'] || '已成功登出！');
     } catch (error) {
-        alert((texts['logout-failed'] || '登出失敗：') + error.message);
+        alert(texts['logout-failed'] || texts['error-generic'] || '登出失敗，請稍後再試。');
     }
 };
 
-// 更新認證 UI
+// 更新跨裝置同步區塊的認證 UI
 function updateAuthUI(user) {
-    const navButtonsGroup = document.querySelector('.nav-buttons-group');
-    if (!navButtonsGroup) return;
-    
-    const texts = window.getTexts ? window.getTexts() : { 'login': '登入', 'signup': '註冊', 'logout': '登出' };
-    
+    const syncActions = document.getElementById('sync-actions');
+    if (!syncActions) return;
+
+    const texts = window.getTexts ? window.getTexts() : { login: '登入', signup: '註冊', logout: '登出' };
+
     if (user) {
-        // 用戶已登入
-        const userEmail = user.email;
-        navButtonsGroup.innerHTML = `
-            <span style="color: var(--text-muted); font-size: 0.75rem; margin-right: 8px;">${userEmail}</span>
+        syncActions.innerHTML = `
+            <span style="color: var(--text-muted); font-size: 0.85rem; margin-right: 8px;">${user.email}</span>
             <a href="#" class="nav-link nav-link-signin" onclick="handleLogout(); return false;">${texts['logout']}</a>
         `;
     } else {
-        // 用戶未登入
-        navButtonsGroup.innerHTML = `
+        syncActions.innerHTML = `
             <a href="#" class="nav-link nav-link-signin" onclick="openLogin(); return false;">${texts['login']}</a>
             <a href="#" class="nav-link nav-link-signup" onclick="openSignup(); return false;">${texts['signup']}</a>
         `;
     }
 }
 
-// 監聽認證狀態變化
+window.updateSyncAuthUI = updateAuthUI;
+
 onAuthStateChanged(auth, (user) => {
     updateAuthUI(user);
-    // 顯示/隱藏留言板
-    if (window.toggleMessagesSection) {
-        window.toggleMessagesSection(!!user);
-    }
 });
 
 // 開啟登入模態框
@@ -245,7 +239,7 @@ window.handleForgotPassword = async function(event) {
             } else if (error.code === 'auth/too-many-requests') {
                 errorDiv.textContent = texts['error-too-many-requests'] || '請求過於頻繁，請稍後再試。';
             } else {
-                errorDiv.textContent = (texts['reset-email-failed'] || '發送失敗：') + error.message;
+                errorDiv.textContent = texts['reset-email-failed'] || texts['error-generic'] || '發送失敗，請稍後再試。';
             }
         }
     } finally {

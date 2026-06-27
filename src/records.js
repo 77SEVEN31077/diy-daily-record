@@ -1,71 +1,61 @@
-import { db, collection, addDoc, Timestamp } from './firebase.js';
+import { getLocalRecords, saveLocalRecords, renderLocalStats, updateShareCaptureArea } from './stats.js';
+import { syncLeaderboardIncrement } from './leaderboardSync.js';
+import { sanitizeDisplayName } from './sanitize.js';
 
-// 渲染個人本地歷史 (保留 LocalStorage 方便快速查看)
-export function renderLocalHistory() {
-    const records = JSON.parse(localStorage.getItem('wank_records') || '[]');
-    const list = document.getElementById('history-list');
-    const section = document.getElementById('history-section');
-    
-    // 獲取當前語言的翻譯
-    const texts = window.getTexts ? window.getTexts() : { 'synced': '已同步' };
-    const syncedText = texts['synced'] || '已同步';
-    
-    if (records.length > 0) {
-        section.style.display = 'block';
-        list.innerHTML = records.sort((a,b) => new Date(b.time) - new Date(a.time))
-            .slice(0, 10) // 只顯示最近10筆
-            .map(rec => {
-                const dateObj = new Date(rec.time);
-                const dateStr = `${dateObj.getFullYear()}/${String(dateObj.getMonth()+1).padStart(2,'0')}/${String(dateObj.getDate()).padStart(2,'0')} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}`;
-                return `<li class="history-item"><span>${dateStr}</span><span style="color:#666">${syncedText}</span></li>`;
-            }).join('');
-    }
-}
-
-// 暴露到全局以便語言切換時調用
-window.renderLocalHistory = renderLocalHistory;
-
-// 核心功能：新增紀錄到 Firebase
+/**
+ * 新增紀錄：
+ * 1. 永遠只寫入 localStorage（時間、備註）
+ * 2. 僅在使用者勾選「加入本月排行榜」時，才呼叫 Firebase
+ * 3. Firebase 只寫入 monthlyLeaderboard 聚合欄位，不含私人時間
+ */
 window.addRecord = async function() {
-    const nicknameInput = document.getElementById('nickname');
     const timeInput = document.getElementById('record-time');
-    const nickname = nicknameInput.value.trim();
-    const time = timeInput.value;
-    const t = window.getTexts ? window.getTexts() : (window.texts || {});
+    const noteInput = document.getElementById('record-note');
+    const joinCheckbox = document.getElementById('join-leaderboard');
+    const publicNicknameInput = document.getElementById('public-nickname');
+    const t = window.getTexts ? window.getTexts() : {};
 
-    if (!nickname) return alert(t['alert-nickname'] || '請輸入暱稱！');
-    if (!time) return alert(t['alert-time'] || '請選擇時間！');
+    const time = timeInput?.value;
+    const note = noteInput?.value?.trim() || '';
+    const joinLeaderboard = joinCheckbox?.checked === true;
 
-    try {
-        // 1. 存到 Firebase
-        await addDoc(collection(db, "records"), {
-            nickname: nickname,
-            time: Timestamp.fromDate(new Date(time)),
-            createdAt: Timestamp.now()
-        });
-
-        // 2. 存到本地緩存
-        const localRecords = JSON.parse(localStorage.getItem('wank_records') || '[]');
-        localRecords.push({ time: time });
-        localStorage.setItem('wank_records', JSON.stringify(localRecords));
-        localStorage.setItem('wank_nickname', nickname);
-
-        alert(t['alert-success'] || '紀錄成功！要注意身體喔。');
-        renderLocalHistory();
-        // 等待loadLeaderboard函數可用
-        let waitCount = 0;
-        const checkLoadLeaderboard = setInterval(() => {
-            waitCount++;
-            if (typeof window.loadLeaderboard === 'function') {
-                clearInterval(checkLoadLeaderboard);
-                window.loadLeaderboard();
-            } else if (waitCount > 50) {
-                clearInterval(checkLoadLeaderboard);
-                console.error('loadLeaderboard函數在5秒後仍未定義');
-            }
-        }, 100);
-    } catch (e) {
-        console.error(e);
-        alert(t['alert-sync-failed'] || '同步失敗，請檢查網路或 Firebase 規則。');
+    if (!time) {
+        alert(t['alert-time'] || '請選擇時間！');
+        return;
     }
+
+    if (joinLeaderboard) {
+        const displayName = sanitizeDisplayName(publicNicknameInput?.value);
+        if (!displayName) {
+            alert(t['alert-display-name'] || '加入排行榜需填寫公開暱稱（1-24 字元）');
+            return;
+        }
+    }
+
+    // 私人紀錄：僅本機
+    const records = getLocalRecords();
+    records.push({ time, note: note || undefined });
+    saveLocalRecords(records);
+
+    renderLocalStats();
+    updateShareCaptureArea();
+
+    // Firebase：僅 opt-in 時寫入排行榜聚合資料
+    if (joinLeaderboard) {
+        try {
+            await syncLeaderboardIncrement(publicNicknameInput.value);
+            if (typeof window.loadLeaderboard === 'function') {
+                window.loadLeaderboard();
+            }
+        } catch (e) {
+            console.error(e);
+            alert(t['alert-leaderboard-failed'] || '本機已保存，但排行榜同步失敗，請稍後再試。');
+            return;
+        }
+    }
+
+    if (noteInput) noteInput.value = '';
+    alert(t['alert-success'] || '紀錄成功！');
 };
+
+window.renderLocalHistory = renderLocalStats;

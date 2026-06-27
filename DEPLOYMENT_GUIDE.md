@@ -1,5 +1,7 @@
 # 🚀 部署指南 - Node.js 架構更新
 
+> **2025 更新：** 本專案網站**只部署至 Vercel**。Firebase 僅作 Firestore / Auth，不作 Hosting。請以 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) 與 [README.md](README.md) 為準。
+
 ## 📋 需要上傳/提交的文件
 
 ### 如果是使用 Git（推薦）
@@ -66,18 +68,13 @@ npm run build
 
 ## 🌐 部署步驟
 
-### 方式一：Firebase 部署
+> **注意：** 以下「Firebase 部署」章節已停用。正式環境請只使用 Vercel。
 
-```bash
-# 方法 1：使用 npm 腳本（推薦）
-npm run deploy:firebase
+### ~~方式一：Firebase 部署~~（已停用）
 
-# 方法 2：手動部署
-npm run build
-firebase deploy
-```
+本專案不使用 Firebase Hosting。請勿執行 `firebase deploy`。
 
-### 方式二：Vercel 部署
+### 方式一：Vercel 部署（正式環境）
 
 ```bash
 # 方法 1：使用 npm 腳本（推薦）
@@ -88,7 +85,7 @@ npm run build
 vercel --prod
 ```
 
-### 方式三：Vercel 自動部署（如果已連接 Git）
+### 方式二：Vercel 自動部署（如果已連接 Git）
 
 如果您的 Vercel 項目已連接到 Git 倉庫，推送代碼後會自動部署。
 

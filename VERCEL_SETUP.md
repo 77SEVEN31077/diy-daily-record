@@ -1,10 +1,11 @@
 # 🚀 Vercel 自動部署設置指南
 
+> **架構說明：** 網站只部署在 Vercel；Firebase 僅提供 Firestore / Auth。見 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
+
 ## ✅ 已完成
 
 1. ✅ 代碼已推送到 GitHub：`https://github.com/77SEVEN31077/diy-daily-record.git`
 2. ✅ `vercel.json` 已配置構建設置
-3. ✅ Firebase 已成功部署
 
 ## 📋 Vercel 部署方式
 
