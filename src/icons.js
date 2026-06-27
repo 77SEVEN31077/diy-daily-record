@@ -7,6 +7,10 @@ const ICONS = {
         dark: '/icons/section-icon-dark.png',
         light: '/icons/section-icon-light.png',
     },
+    age: {
+        dark: '/icons/age-icon-dark.png?v=2',
+        light: '/icons/age-icon-light.png?v=2',
+    },
 };
 
 export function isLightTheme() {
@@ -15,6 +19,17 @@ export function isLightTheme() {
     if (theme === 'light') return true;
     if (theme === 'dark') return false;
     return root.classList.contains('light');
+}
+
+export function getAgeIconSrc() {
+    return isLightTheme() ? ICONS.age.light : ICONS.age.dark;
+}
+
+export function updateAgeGateIcons() {
+    const src = getAgeIconSrc();
+    document.querySelectorAll('.age-title-icon').forEach((img) => {
+        if (img.getAttribute('src') !== src) img.src = src;
+    });
 }
 
 export function updateThemeIcons() {
@@ -28,6 +43,7 @@ export function updateThemeIcons() {
     document.querySelectorAll('.section-title-icon').forEach((img) => {
         if (img.getAttribute('src') !== sectionSrc) img.src = sectionSrc;
     });
+    updateAgeGateIcons();
 }
 
 export function updateAgeGateLangButtons(lang) {
@@ -40,6 +56,8 @@ export function updateAgeGateLangButtons(lang) {
 }
 
 window.updateThemeIcons = updateThemeIcons;
+window.updateAgeGateIcons = updateAgeGateIcons;
+window.getAgeIconSrc = getAgeIconSrc;
 window.updateAgeGateLangButtons = updateAgeGateLangButtons;
 
 window.selectAgeGateLanguage = function(lang) {

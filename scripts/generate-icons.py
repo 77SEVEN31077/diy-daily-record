@@ -6,11 +6,12 @@ import os
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 SRC = os.path.join(ROOT, 'public', 'icons', 'hero-icon.png')
 AGE_SRC = os.path.join(ROOT, 'public', 'icons', 'age-icon.png')
-AGE_CROPPED_OUT = os.path.join(ROOT, 'public', 'icons', 'age-icon-cropped.png')
-AGE_CROPPED_LIGHT_OUT = os.path.join(ROOT, 'public', 'icons', 'age-icon-cropped-light.png')
+AGE_DARK_OUT = os.path.join(ROOT, 'public', 'icons', 'age-icon-dark.png')
+AGE_LIGHT_OUT = os.path.join(ROOT, 'public', 'icons', 'age-icon-light.png')
 OUT_DIR = os.path.join(ROOT, 'public', 'icons')
 MARGIN_RATIO = 0.05
 LINE_COLOR = (34, 34, 34, 255)
+BLUSH_COLOR = (208, 138, 138, 255)
 
 
 def trim_content(im, margin_ratio=MARGIN_RATIO, threshold=18):
@@ -99,6 +100,32 @@ def crop_age_icon_tight(im, margin_ratio=0.05, lum_threshold=22):
     return canvas
 
 
+def to_age_light_variant(im):
+    """Transparent background + dark gray lines; preserve muted blush."""
+    im = im.convert('RGBA')
+    pixels = im.load()
+    w, h = im.size
+    for y in range(h):
+        for x in range(w):
+            r, g, b, a = pixels[x, y]
+            if a < 8:
+                continue
+            lum = 0.299 * r + 0.587 * g + 0.114 * b
+            if is_blush_pixel(r, g, b):
+                blush_alpha = min(255, max(120, int((r - 90) * 1.6)))
+                pixels[x, y] = (*BLUSH_COLOR[:3], blush_alpha)
+            elif lum < 40:
+                pixels[x, y] = (0, 0, 0, 0)
+            elif lum > 175:
+                pixels[x, y] = LINE_COLOR
+            elif lum > 70:
+                edge_alpha = min(255, int((lum - 55) * 2.0))
+                pixels[x, y] = (42, 42, 42, edge_alpha)
+            else:
+                pixels[x, y] = (0, 0, 0, 0)
+    return im
+
+
 def is_blush(r, g, b):
     return r > 130 and g < 110 and b < 110 and r > g + 20 and r > b + 20
 
@@ -143,9 +170,9 @@ def main():
 
     if os.path.exists(AGE_SRC):
         age_source = Image.open(AGE_SRC)
-        age_cropped = crop_age_icon_tight(age_source, margin_ratio=0.05, lum_threshold=22)
-        save_png(age_cropped, AGE_CROPPED_OUT)
-        save_png(to_light_variant(age_cropped.copy()), AGE_CROPPED_LIGHT_OUT)
+        age_dark = crop_age_icon_tight(age_source, margin_ratio=0.05, lum_threshold=22)
+        save_png(age_dark, AGE_DARK_OUT)
+        save_png(to_age_light_variant(age_dark.copy()), AGE_LIGHT_OUT)
 
 
 if __name__ == '__main__':
