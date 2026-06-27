@@ -17,14 +17,26 @@
     <!-- 18+ 年齡確認 -->
     <div id="ageGateModal" class="modal age-gate-modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="age-gate-title">年齡確認</h3>
+            <div class="modal-header age-gate-header">
+                <div class="age-title-mobile-icon-wrap" aria-hidden="true">
+                    <img class="age-title-icon age-title-icon-mobile" src="/icons/age-icon.png" alt="" />
+                </div>
+                <div class="age-title-row">
+                    <img class="age-title-icon age-title-icon-side" src="/icons/age-icon.png" alt="" aria-hidden="true" />
+                    <h3 id="age-gate-title">年齡確認</h3>
+                    <img class="age-title-icon age-title-icon-side" src="/icons/age-icon.png" alt="" aria-hidden="true" />
+                </div>
             </div>
             <div class="modal-body">
                 <div id="age-gate-text" class="age-gate-lines">
                     <span id="age-gate-line1" class="age-gate-line">本網站僅供 18 歲以上使用者。</span>
                     <span id="age-gate-line2" class="age-gate-line">作為私人紀錄與娛樂用途。</span>
                     <span id="age-gate-line3" class="age-gate-line">繼續使用即表示你已年滿 18 歲。</span>
+                </div>
+                <div class="age-language-switch" id="age-language-switch">
+                    <button type="button" data-lang="en" onclick="selectAgeGateLanguage('en')">EN</button>
+                    <button type="button" data-lang="zh-TW" onclick="selectAgeGateLanguage('zh-TW')">繁</button>
+                    <button type="button" data-lang="zh-CN" onclick="selectAgeGateLanguage('zh-CN')">简</button>
                 </div>
                 <button class="btn" id="age-gate-confirm" onclick="confirmAgeGate()">我已年滿 18 歲</button>
             </div>
@@ -122,16 +134,16 @@
     </nav>
 
     <main class="container main">
-        <header class="hero">
+        <header class="hero" translate="no">
             <div class="hero-title-row">
                 <span class="hero-icon-shell" aria-hidden="true">
-                    <img class="hero-icon" src="/icons/hero-icon-cropped.png" alt="" />
+                    <img class="hero-icon" src="/icons/hero-icon-dark.png" alt="" />
                 </span>
                 <h1 class="hero-title">打飛機紀錄</h1>
             </div>
             <h2 class="hero-subtitle">私密紀錄，不評判。</h2>
             <div class="hero-description" id="hero-description">
-                <p class="hero-desc-lead" id="hero-desc-lead">記下時間，看看頻率，順便面對一下自己。</p>
+                <p class="hero-desc-lead" id="hero-desc-lead"></p>
             </div>
         </header>
 
@@ -141,7 +153,7 @@
                 <div class="section-header card-header">
                     <div class="section-title-row">
                         <span class="section-icon-shell" aria-hidden="true">
-                            <img class="section-title-icon" src="/icons/section-icon-cropped.png" alt="" />
+                            <img class="section-title-icon" src="/icons/section-icon-dark.png" alt="" />
                         </span>
                         <div class="section-title card-title" id="tip-title">小提示</div>
                     </div>
@@ -158,7 +170,7 @@
                 <div class="section-header card-header">
                     <div class="section-title-row">
                         <span class="section-icon-shell" aria-hidden="true">
-                            <img class="section-title-icon" src="/icons/section-icon-cropped.png" alt="" />
+                            <img class="section-title-icon" src="/icons/section-icon-dark.png" alt="" />
                         </span>
                         <div class="section-title card-title" id="record-section-title">新增紀錄</div>
                     </div>
@@ -191,7 +203,7 @@
             <div class="section-header card-header">
                 <div class="section-title-row">
                     <span class="section-icon-shell" aria-hidden="true">
-                        <img class="section-title-icon" src="/icons/section-icon-cropped.png" alt="" />
+                        <img class="section-title-icon" src="/icons/section-icon-dark.png" alt="" />
                     </span>
                     <div class="section-title card-title" id="stats-section-title">目前統計</div>
                 </div>
@@ -222,7 +234,7 @@
             <div class="section-header card-header">
                 <div class="section-title-row">
                     <span class="section-icon-shell" aria-hidden="true">
-                        <img class="section-title-icon" src="/icons/section-icon-cropped.png" alt="" />
+                        <img class="section-title-icon" src="/icons/section-icon-dark.png" alt="" />
                     </span>
                     <div class="section-title card-title" id="rank-section-title">本月排行榜</div>
                 </div>
@@ -245,7 +257,7 @@
             <div class="section-header card-header">
                 <div class="section-title-row">
                     <span class="section-icon-shell" aria-hidden="true">
-                        <img class="section-title-icon" src="/icons/section-icon-cropped.png" alt="" />
+                        <img class="section-title-icon" src="/icons/section-icon-dark.png" alt="" />
                     </span>
                     <div class="section-title card-title" id="sync-section-title">跨裝置同步</div>
                 </div>

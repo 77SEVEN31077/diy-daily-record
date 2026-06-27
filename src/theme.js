@@ -32,6 +32,9 @@
                 root.style.colorScheme = theme;
             }
         }
+        if (typeof window.updateThemeIcons === 'function') {
+            window.updateThemeIcons();
+        }
     }
     
     // 初始化主題

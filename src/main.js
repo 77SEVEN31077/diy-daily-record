@@ -3,8 +3,10 @@ import './styles.css';
 import './firebase.js';
 import './theme.js';
 import './language.js';
+import './icons.js';
 import './auth.js';
 import { initTime, shareStats, initLanguage, initAgeGate } from './utils.js';
+import { updateThemeIcons } from './icons.js';
 import './records.js';
 import { renderLocalStats } from './stats.js';
 import { initLeaderboardOptIn } from './leaderboardSync.js';
@@ -18,6 +20,7 @@ window.addEventListener('DOMContentLoaded', () => {
     initTime();
     initLeaderboardOptIn();
     renderLocalStats();
+    updateThemeIcons();
 
     if (typeof window.loadLeaderboard === 'function') {
         window.loadLeaderboard();

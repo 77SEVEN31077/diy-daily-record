@@ -10,6 +10,9 @@ export function initTime() {
 // 18+ 年齡確認
 export function initAgeGate() {
     if (localStorage.getItem('age_confirmed') === 'true') return;
+    if (typeof window.updateAgeGateLangButtons === 'function') {
+        window.updateAgeGateLangButtons(window.getCurrentLanguage ? window.getCurrentLanguage() : 'zh-TW');
+    }
     const modal = document.getElementById('ageGateModal');
     if (modal) modal.style.display = 'block';
 }
@@ -794,12 +797,29 @@ function updatePageTexts() {
     if (typeof window.renderLocalStats === 'function') window.renderLocalStats();
     if (typeof window.loadLeaderboard === 'function') window.loadLeaderboard();
     if (typeof window.updateSyncAuthUI === 'function') window.updateSyncAuthUI();
+    if (typeof window.updateThemeIcons === 'function') window.updateThemeIcons();
+    if (typeof window.updateAgeGateLangButtons === 'function') window.updateAgeGateLangButtons(currentLanguage);
+}
+
+export function resolveInitialLanguage() {
+    const saved = localStorage.getItem('language');
+    if (saved && translations[saved]) return saved;
+
+    const nav = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+    if (nav === 'zh-tw' || nav === 'zh-hk' || nav === 'zh-mo'
+        || nav.startsWith('zh-tw') || nav.startsWith('zh-hk') || nav.startsWith('zh-mo')) {
+        return 'zh-TW';
+    }
+    if (nav === 'zh-cn' || nav === 'zh-sg'
+        || nav.startsWith('zh-cn') || nav.startsWith('zh-sg')) {
+        return 'zh-CN';
+    }
+    return 'en';
 }
 
 // 初始化語言
 export function initLanguage() {
-    const savedLang = localStorage.getItem('language') || 'zh-TW';
-    setLanguage(savedLang);
+    setLanguage(resolveInitialLanguage());
 }
 
 // 將 texts 暴露為當前語言的翻譯（向後兼容）

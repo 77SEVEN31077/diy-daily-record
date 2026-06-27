@@ -1,12 +1,15 @@
-const CACHE_NAME = 'daily-record-v10';
+const CACHE_NAME = 'daily-record-v11';
 const urlsToCache = [
   '/',
   '/index.html',
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
-  '/icons/hero-icon-cropped.png',
-  '/icons/section-icon-cropped.png',
+  '/icons/hero-icon-dark.png',
+  '/icons/hero-icon-light.png',
+  '/icons/section-icon-dark.png',
+  '/icons/section-icon-light.png',
+  '/icons/age-icon.png',
   'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js',
   'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js',
   'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js'
