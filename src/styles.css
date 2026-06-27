@@ -1085,25 +1085,33 @@ button,
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 22px;
-    margin-bottom: 1.5rem;
+    gap: 14px;
+    margin-bottom: 2rem;
+}
+
+.age-icon-shell {
+    width: 128px;
+    height: 128px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 128px;
+    overflow: visible;
 }
 
 .age-title-icon {
-    width: 76px;
-    height: 76px;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     object-position: center;
     display: block;
-    flex: 0 0 auto;
+    transform: none;
+    clip-path: none;
 }
 
 .age-title-row h3 {
     margin: 0;
-}
-
-.age-title-mobile-icon-wrap {
-    display: none;
+    line-height: 1.1;
+    white-space: nowrap;
 }
 
 .age-gate-lines {
@@ -1314,27 +1322,18 @@ button,
     }
 
     .age-title-row {
-        gap: 12px;
-        margin-bottom: 1.25rem;
+        gap: 10px;
+        margin-bottom: 1.5rem;
     }
 
-    .age-title-icon-side {
-        display: none;
-    }
-
-    .age-title-mobile-icon-wrap {
-        display: block;
-        margin-bottom: 0.75rem;
-    }
-
-    .age-title-icon-mobile {
-        width: 48px;
-        height: 48px;
-        margin: 0 auto;
+    .age-icon-shell {
+        width: 58px;
+        height: 58px;
+        flex-basis: 58px;
     }
 
     .age-title-row h3 {
-        width: 100%;
+        font-size: 1.8rem;
     }
 
     .hero-subtitle {
@@ -1379,5 +1378,22 @@ button,
     .legal-list li {
         font-size: 0.95rem;
         line-height: 1.7;
+    }
+}
+
+@media (max-width: 420px) {
+    .age-title-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .age-title-row .age-icon-shell:last-child {
+        display: none;
+    }
+
+    .age-icon-shell {
+        width: 72px;
+        height: 72px;
+        flex-basis: 72px;
     }
 }

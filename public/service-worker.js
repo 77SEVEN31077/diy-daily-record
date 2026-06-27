@@ -1,4 +1,4 @@
-const CACHE_NAME = 'diy-daily-record-v-icon-20260628';
+const CACHE_NAME = 'diy-daily-record-v-age-icon-20260628';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -18,7 +18,7 @@ const urlsToCache = [
   '/icons/hero-icon-light.png',
   '/icons/section-icon-dark.png',
   '/icons/section-icon-light.png',
-  '/icons/age-icon.png',
+  '/icons/age-icon-cropped.png',
   'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js',
   'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js',
   'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js'

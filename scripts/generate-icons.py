@@ -6,6 +6,8 @@ import os
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 SRC = os.path.join(ROOT, 'public', 'icons', 'hero-icon.png')
 AGE_SRC = os.path.join(ROOT, 'public', 'icons', 'age-icon.png')
+AGE_CROPPED_OUT = os.path.join(ROOT, 'public', 'icons', 'age-icon-cropped.png')
+AGE_CROPPED_LIGHT_OUT = os.path.join(ROOT, 'public', 'icons', 'age-icon-cropped-light.png')
 OUT_DIR = os.path.join(ROOT, 'public', 'icons')
 MARGIN_RATIO = 0.05
 LINE_COLOR = (34, 34, 34, 255)
@@ -22,6 +24,56 @@ def trim_content(im, margin_ratio=MARGIN_RATIO, threshold=18):
         for x in range(w):
             r, g, b, a = pixels[x, y]
             if a > 10 and (r > threshold or g > threshold or b > threshold):
+                found = True
+                min_x = min(min_x, x)
+                min_y = min(min_y, y)
+                max_x = max(max_x, x)
+                max_y = max(max_y, y)
+    if not found:
+        return im
+    cw, ch = max_x - min_x + 1, max_y - min_y + 1
+    pad_x = int(cw * margin_ratio)
+    pad_y = int(ch * margin_ratio)
+    left = max(0, min_x - pad_x)
+    top = max(0, min_y - pad_y)
+    right = min(w, max_x + pad_x + 1)
+    bottom = min(h, max_y + pad_y + 1)
+    cropped = im.crop((left, top, right, bottom))
+    cw2, ch2 = cropped.size
+    side = max(cw2, ch2)
+    pad = int(side * margin_ratio)
+    canvas = Image.new('RGBA', (side + pad * 2, side + pad * 2), (0, 0, 0, 255))
+    ox = pad + (side - cw2) // 2
+    oy = pad + (side - ch2) // 2
+    canvas.paste(cropped, (ox, oy), cropped)
+    return canvas
+
+
+def is_blush_pixel(r, g, b):
+    return r > 120 and g < 130 and b < 130 and r > g + 15 and r > b + 15
+
+
+def is_age_art_pixel(r, g, b, a, lum_threshold=22):
+    if a < 8:
+        return False
+    if is_blush_pixel(r, g, b):
+        return True
+    lum = 0.299 * r + 0.587 * g + 0.114 * b
+    return lum >= lum_threshold
+
+
+def crop_age_icon_tight(im, margin_ratio=0.05, lum_threshold=22):
+    """Tight crop for age gate: keeps 18+ card, face, clock; drops outer black padding."""
+    if im.mode != 'RGBA':
+        im = im.convert('RGBA')
+    w, h = im.size
+    pixels = im.load()
+    min_x, min_y, max_x, max_y = w, h, 0, 0
+    found = False
+    for y in range(h):
+        for x in range(w):
+            r, g, b, a = pixels[x, y]
+            if is_age_art_pixel(r, g, b, a, lum_threshold):
                 found = True
                 min_x = min(min_x, x)
                 min_y = min(min_y, y)
@@ -90,8 +142,10 @@ def main():
         save_png(light, os.path.join(OUT_DIR, f'{name}.png'))
 
     if os.path.exists(AGE_SRC):
-        age = trim_content(Image.open(AGE_SRC), margin_ratio=0.06)
-        save_png(age, AGE_SRC)
+        age_source = Image.open(AGE_SRC)
+        age_cropped = crop_age_icon_tight(age_source, margin_ratio=0.05, lum_threshold=22)
+        save_png(age_cropped, AGE_CROPPED_OUT)
+        save_png(to_light_variant(age_cropped.copy()), AGE_CROPPED_LIGHT_OUT)
 
 
 if __name__ == '__main__':
