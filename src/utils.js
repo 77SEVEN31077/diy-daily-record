@@ -1,10 +1,22 @@
 // 工具函數
+import { formatDateTimeLocal } from './dateUtils.js';
 
 // 初始化時間輸入框
 export function initTime() {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    document.getElementById('record-time').value = now.toISOString().slice(0, 16);
+    const input = document.getElementById('record-time');
+    if (!input) return;
+
+    const localNow = formatDateTimeLocal(new Date());
+    input.value = localNow;
+    input.max = localNow;
+}
+
+export function refreshRecordTimeMax() {
+    const input = document.getElementById('record-time');
+    if (!input) return;
+
+    const localNow = formatDateTimeLocal(new Date());
+    input.max = localNow;
 }
 
 // 18+ 年齡確認
@@ -46,7 +58,7 @@ export async function shareStats() {
 
     try {
         const { monthlyCount, sinceLast, longestInterval } = computeStats();
-        const sinceLastStr = sinceLast != null ? formatDuration(sinceLast, texts) : '—';
+        const sinceLastStr = sinceLast != null ? formatDuration(Math.max(0, sinceLast), texts) : '—';
         const longestStr = longestInterval != null ? formatDuration(longestInterval, texts) : '—';
 
         const canvas = await renderBattleCard({
@@ -154,6 +166,9 @@ export const translations = {
         'unit-hour': '小時',
         'unit-minute': '分鐘',
         'alert-time': '請選擇時間！',
+        'alert-invalid-time': '時間格式不正確，請重新選擇。',
+        'alert-future-time': '時間不能晚於現在。',
+        'future-records-excluded': '有 {count} 筆時間晚於現在，已不納入統計。',
         'alert-display-name': '加入排行榜需填寫公開暱稱（1-24 字元）',
         'alert-success': '紀錄成功！',
         'alert-leaderboard-failed': '本機已保存，但排行榜同步失敗，請稍後再試。',
@@ -312,6 +327,9 @@ export const translations = {
         'unit-hour': 'h',
         'unit-minute': 'm',
         'alert-time': 'Please select a time!',
+        'alert-invalid-time': 'Invalid time format. Please choose again.',
+        'alert-future-time': 'Time cannot be later than now.',
+        'future-records-excluded': '{count} record(s) are later than now and are excluded from stats.',
         'alert-display-name': 'Public nickname required (1-24 chars) to join leaderboard.',
         'alert-success': 'Recorded!',
         'alert-leaderboard-failed': 'Saved locally, but leaderboard sync failed. Try again later.',
@@ -470,6 +488,9 @@ export const translations = {
         'unit-hour': '小时',
         'unit-minute': '分钟',
         'alert-time': '请选择时间！',
+        'alert-invalid-time': '时间格式不正确，请重新选择。',
+        'alert-future-time': '时间不能晚于现在。',
+        'future-records-excluded': '有 {count} 笔时间晚于现在，已不纳入统计。',
         'alert-display-name': '加入排行榜需填写公开昵称（1-24 字符）',
         'alert-success': '记录成功！',
         'alert-leaderboard-failed': '本机已保存，但排行榜同步失败，请稍后再试。',

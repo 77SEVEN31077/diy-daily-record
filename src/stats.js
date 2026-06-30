@@ -1,4 +1,5 @@
 import { escapeHtml } from './sanitize.js';
+import { isFutureDate } from './dateUtils.js';
 
 const STORAGE_KEY = 'wank_records';
 
@@ -40,26 +41,34 @@ export function formatDuration(ms, texts) {
     return texts['time-just-now'] || '剛剛';
 }
 
-export function computeStats(records = getLocalRecords()) {
-    const sorted = [...records]
-        .filter(r => r.time)
-        .sort((a, b) => new Date(b.time) - new Date(a.time));
+function parseRecord(record) {
+    if (!record || !record.time) return null;
+    const date = new Date(record.time);
+    if (Number.isNaN(date.getTime())) return null;
+    return { ...record, date };
+}
 
+export function computeStats(records = getLocalRecords()) {
     const now = new Date();
+    const parsed = records.map(parseRecord).filter(Boolean);
+    const sorted = [...parsed].sort((a, b) => b.date - a.date);
+    const futureRecords = sorted.filter((record) => isFutureDate(record.date, now));
+    const validSorted = sorted.filter((record) => !isFutureDate(record.date, now));
+
     const monthKey = getCurrentMonthKey(now);
-    const monthlyCount = sorted.filter(r => getCurrentMonthKey(new Date(r.time)) === monthKey).length;
+    const monthlyCount = validSorted.filter((record) => getCurrentMonthKey(record.date) === monthKey).length;
 
     let sinceLast = null;
-    if (sorted.length > 0) {
-        sinceLast = now - new Date(sorted[0].time);
+    if (validSorted.length > 0) {
+        sinceLast = Math.max(0, now - validSorted[0].date);
     }
 
     let avgInterval = null;
     let longestInterval = null;
-    if (sorted.length >= 2) {
+    if (validSorted.length >= 2) {
         const intervals = [];
-        for (let i = 0; i < sorted.length - 1; i++) {
-            const gap = new Date(sorted[i].time) - new Date(sorted[i + 1].time);
+        for (let i = 0; i < validSorted.length - 1; i++) {
+            const gap = validSorted[i].date - validSorted[i + 1].date;
             if (gap > 0) intervals.push(gap);
         }
         if (intervals.length > 0) {
@@ -68,22 +77,55 @@ export function computeStats(records = getLocalRecords()) {
         }
     }
 
-    return { sorted, monthlyCount, sinceLast, avgInterval, longestInterval };
+    return {
+        sorted,
+        validSorted,
+        futureRecords,
+        futureCount: futureRecords.length,
+        monthlyCount,
+        sinceLast,
+        avgInterval,
+        longestInterval
+    };
+}
+
+function formatFutureRecordsHint(texts, futureCount) {
+    const template = texts['future-records-excluded'] || '有 {count} 筆時間晚於現在，已不納入統計。';
+    return template.replace('{count}', String(futureCount));
 }
 
 export function renderLocalStats() {
     const texts = window.getTexts ? window.getTexts() : {};
-    const { sorted, monthlyCount, sinceLast, avgInterval } = computeStats();
+    const {
+        sorted,
+        futureCount,
+        monthlyCount,
+        sinceLast,
+        avgInterval
+    } = computeStats();
 
     const sinceEl = document.getElementById('stat-since-value');
     const monthlyEl = document.getElementById('stat-monthly-value');
     const avgEl = document.getElementById('stat-avg-value');
     const list = document.getElementById('history-list');
     const emptyHint = document.getElementById('history-empty');
+    const futureHint = document.getElementById('history-future-hint');
 
-    if (sinceEl) sinceEl.textContent = sinceLast != null ? formatDuration(sinceLast, texts) : '—';
+    if (sinceEl) {
+        sinceEl.textContent = sinceLast != null ? formatDuration(sinceLast, texts) : '—';
+    }
     if (monthlyEl) monthlyEl.textContent = String(monthlyCount);
     if (avgEl) avgEl.textContent = avgInterval != null ? formatDuration(avgInterval, texts) : '—';
+
+    if (futureHint) {
+        if (futureCount > 0) {
+            futureHint.textContent = formatFutureRecordsHint(texts, futureCount);
+            futureHint.style.display = 'block';
+        } else {
+            futureHint.textContent = '';
+            futureHint.style.display = 'none';
+        }
+    }
 
     if (!list) return;
 
@@ -95,11 +137,13 @@ export function renderLocalStats() {
     }
 
     if (emptyHint) emptyHint.style.display = 'none';
-    list.innerHTML = recent.map(rec => {
-        const dateObj = new Date(rec.time);
+    const now = new Date();
+    list.innerHTML = recent.map((rec) => {
+        const dateObj = rec.date;
         const dateStr = `${dateObj.getFullYear()}/${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getDate()).padStart(2, '0')} ${String(dateObj.getHours()).padStart(2, '0')}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
         const note = rec.note ? `<span class="history-note">${escapeHtml(rec.note)}</span>` : '';
-        return `<li class="history-item"><span>${dateStr}${note ? ' · ' + note : ''}</span></li>`;
+        const futureClass = isFutureDate(dateObj, now) ? ' is-future-record' : '';
+        return `<li class="history-item${futureClass}"><span>${dateStr}${note ? ' · ' + note : ''}</span></li>`;
     }).join('');
 }
 

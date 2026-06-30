@@ -1,6 +1,12 @@
 import { getLocalRecords, saveLocalRecords, renderLocalStats } from './stats.js';
 import { syncLeaderboardIncrement } from './leaderboardSync.js';
 import { sanitizeDisplayName } from './sanitize.js';
+import {
+    formatDateTimeLocal,
+    parseLocalRecordTime,
+    FUTURE_TOLERANCE_MS
+} from './dateUtils.js';
+import { initTime, refreshRecordTimeMax } from './utils.js';
 
 /**
  * 新增紀錄：
@@ -15,12 +21,29 @@ window.addRecord = async function() {
     const publicNicknameInput = document.getElementById('public-nickname');
     const t = window.getTexts ? window.getTexts() : {};
 
+    refreshRecordTimeMax();
+
     const time = timeInput?.value;
     const note = noteInput?.value?.trim() || '';
     const joinLeaderboard = joinCheckbox?.checked === true;
 
     if (!time) {
         alert(t['alert-time'] || '請選擇時間！');
+        return;
+    }
+
+    const selectedDate = parseLocalRecordTime(time);
+    if (!selectedDate) {
+        alert(t['alert-invalid-time'] || '時間格式不正確，請重新選擇。');
+        return;
+    }
+
+    const now = new Date();
+    if (selectedDate.getTime() - now.getTime() > FUTURE_TOLERANCE_MS) {
+        alert(t['alert-future-time'] || '時間不能晚於現在。');
+        const localNow = formatDateTimeLocal(now);
+        timeInput.value = localNow;
+        timeInput.max = localNow;
         return;
     }
 
@@ -54,6 +77,7 @@ window.addRecord = async function() {
     }
 
     if (noteInput) noteInput.value = '';
+    initTime();
     alert(t['alert-success'] || '紀錄成功！');
 };
 

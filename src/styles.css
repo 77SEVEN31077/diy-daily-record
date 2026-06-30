@@ -613,6 +613,17 @@ button,
     transition: color 0.3s, border-color 0.3s;
 }
 
+.history-item.is-future-record {
+    opacity: 0.72;
+}
+
+.future-records-hint {
+    margin-top: 0.65rem;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+}
+
 .rank-item span:first-child {
     color: var(--text-color);
 }
