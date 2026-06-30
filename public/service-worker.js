@@ -1,4 +1,4 @@
-const CACHE_NAME = 'diy-daily-record-v-time-stats-fix-20260630';
+const CACHE_NAME = 'diy-daily-record-v-leaderboard-you-fix-20260630';
 const urlsToCache = [
   '/',
   '/index.html',

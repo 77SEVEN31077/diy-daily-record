@@ -1,6 +1,7 @@
 import { db, collection, query, where, orderBy, limit, getDocs } from './firebase.js';
 import { escapeHtml } from './sanitize.js';
 import { getCurrentMonthKey } from './stats.js';
+import { getCurrentLeaderboardDocId } from './leaderboardSync.js';
 
 let isLoadingLeaderboard = false;
 
@@ -61,18 +62,19 @@ window.loadLeaderboard = async function() {
         querySnapshot.forEach((docSnap) => {
             const data = docSnap.data();
             entries.push({
+                id: docSnap.id,
                 name: data.displayName || '匿名',
                 count: data.count || 0
             });
         });
 
-        const myName = localStorage.getItem('wank_nickname');
+        const currentDocId = getCurrentLeaderboardDocId(month);
 
         if (entries.length === 0) {
             list.innerHTML = `<li class="rank-item rank-empty">${t['no-records']}</li>`;
         } else {
             list.innerHTML = entries.map((user, index) => {
-                const isMe = user.name === myName;
+                const isMe = user.id === currentDocId;
                 const highlight = isMe ? 'border-bottom: 1px solid var(--highlight);' : '';
                 const isTop3 = index < 3 ? 'top-3' : '';
                 const safeName = escapeHtml(user.name);

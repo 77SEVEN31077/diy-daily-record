@@ -11,22 +11,26 @@ const CLIENT_ID_KEY = 'leaderboard_client_id';
 const OPTIN_KEY = 'leaderboard_optin';
 const NICKNAME_KEY = 'wank_nickname';
 
-function getLeaderboardClientId() {
-    let id = localStorage.getItem(CLIENT_ID_KEY);
+export const LEADERBOARD_CLIENT_ID_KEY = CLIENT_ID_KEY;
 
-    if (!id) {
-        id = crypto.randomUUID
-            ? crypto.randomUUID()
-            : `lb_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+export function getOrCreateLeaderboardClientId() {
+    const existing = localStorage.getItem(CLIENT_ID_KEY);
+    if (existing) return existing;
 
-        localStorage.setItem(CLIENT_ID_KEY, id);
-    }
+    const id = crypto.randomUUID
+        ? crypto.randomUUID()
+        : `lb_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 
+    localStorage.setItem(CLIENT_ID_KEY, id);
     return id;
 }
 
+export function getCurrentLeaderboardDocId(month = getCurrentMonthKey()) {
+    return `${month}_${getOrCreateLeaderboardClientId()}`;
+}
+
 function getLeaderboardDocId(month = getCurrentMonthKey()) {
-    return `${month}_${getLeaderboardClientId()}`;
+    return getCurrentLeaderboardDocId(month);
 }
 
 export function initLeaderboardOptIn() {
