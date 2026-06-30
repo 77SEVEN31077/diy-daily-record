@@ -22,15 +22,25 @@
 
 ## 必要 Composite Index
 
-排行榜查詢需要建立索引：
+排行榜查詢需要建立索引（Firestore Console → Firestore Database → Indexes → Composite indexes）：
 
-- Collection: `monthlyLeaderboard`
-- Fields: `month` Ascending, `count` Descending
+| 項目 | 值 |
+|------|-----|
+| Collection ID | `monthlyLeaderboard` |
+| Field 1 | `month` — Ascending |
+| Field 2 | `count` — Descending |
+| Query scope | Collection |
 
-若尚未建立，Firebase 會在首次查詢失敗時提供建立連結。
+**不要**使用 `records`、`leaderboard`、`monthly-leaderboard` 等其他 collection 名稱。
 
-## 部署後請確認
+若 Console 出現 `The query requires an index` 或錯誤碼 `failed-precondition`，請點錯誤訊息中的連結建立索引，並等待狀態變為 **Enabled**。
 
-1. Rules 已發布
-2. Composite index 已建立
-3. 測試勾選「加入本月排行榜」後能否成功寫入
+前端 Console 若顯示 `hint: MISSING_FIRESTORE_INDEX`，代表需要完成上述步驟。
+
+## 部署後請手動確認（Firebase Console）
+
+1. Firebase **projectId** 必須是 `diy-daily-record`。
+2. Firestore **Rules** 必須已 **Publish**，內容與 `FIRESTORE_RULES_COMPLETE.txt` 一致。
+3. **monthlyLeaderboard** composite index（`month` Asc + `count` Desc）必須建立並 **Enabled**。
+4. Firestore Database 必須不是停用狀態。
+5. 若有 App Check enforcement，須確認 Web app 已正確配置；否則先不要強制 App Check。

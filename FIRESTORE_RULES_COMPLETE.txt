@@ -61,7 +61,7 @@ service cloud.firestore {
         && prev.count is int
         && data.updatedAt is timestamp
         && (
-          (data.count == prev.count + 1 && data.updatedAt > prev.updatedAt)
+          (data.count == prev.count + 1 && data.updatedAt >= prev.updatedAt)
           || (data.count == prev.count && data.displayName != prev.displayName && data.updatedAt >= prev.updatedAt)
         );
     }

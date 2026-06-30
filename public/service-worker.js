@@ -1,4 +1,4 @@
-const CACHE_NAME = 'diy-daily-record-v-share-mark-20260628';
+const CACHE_NAME = 'diy-daily-record-v-leaderboard-fix-20260630';
 const urlsToCache = [
   '/',
   '/index.html',
