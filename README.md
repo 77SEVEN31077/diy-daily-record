@@ -1,92 +1,197 @@
-# 打飛機紀錄
+# 打飛機紀錄 / DIY Daily Record
 
-私密優先的日常紀錄 PWA，使用 Node.js + Vite 構建。
+A privacy-first daily record PWA for tracking something private, awkward, and oddly measurable.
 
-## 架構速覽
+這是一個私密優先的日常紀錄 PWA。
+它把一件通常不會被記錄的事，做成一個可以記錄、統計、加入排行榜、生成戰績圖的小工具。
 
-| 元件 | 用途 |
-|------|------|
-| **Vercel** | 網站前端部署（**唯一正式 Hosting**） |
-| **Firebase** | Firestore（排行榜）、Authentication（帳號）— **不作網站 Hosting** |
-| **localStorage** | 私人紀錄預設保存在使用者本機 |
-| **GitHub** | 原始碼倉庫，推送後觸發 Vercel 自動部署 |
+這不是成人內容網站，也不是健康建議。
+它是一個 Just For Fun 的 vibe coding 作品：低門檻、黑色簡潔、隱私優先、荒謬但乾淨。
 
-完整說明見 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
+## Live Demo
 
-## 技術棧
+https://diy-daily-record.vercel.app/
 
-- **Node.js + Vite** — 建置與開發
-- **Vanilla JavaScript** — 前端模組
-- **Firebase** — Firestore、Authentication（後端服務）
-- **PWA** — Service Worker、manifest
+## Project Positioning
 
-## 專案結構
+This project is a small independent web tool built around three ideas:
 
-```
+* local-first private records
+* optional public monthly leaderboard
+* shareable personal battle card
+
+The core design principle is simple:
+
+> Private records stay on the user's device.
+> Only when the user opts into the leaderboard will a public display name and monthly count be sent to Firebase.
+
+## Features
+
+* 18+ age gate
+* Local private records
+* Optional notes
+* Local statistics
+
+  * this month
+  * time since last record
+  * average gap
+  * longest gap
+  * recent records
+* Optional monthly leaderboard
+* Shareable battle card image
+* Light / dark mode
+* Traditional Chinese / English / Simplified Chinese
+* PWA support
+* External support link via Ko-fi
+
+## Architecture
+
+| Component               | Role                                       |
+| ----------------------- | ------------------------------------------ |
+| Vercel                  | Frontend hosting and production deployment |
+| Firebase Firestore      | Optional leaderboard aggregation           |
+| Firebase Authentication | Account / future cross-device sync         |
+| localStorage            | Private local records                      |
+| GitHub                  | Source code and deployment trigger         |
+
+## Data Flow
+
+### Private Records
+
+Private records are saved in the browser using `localStorage`.
+
+They may include:
+
+* time
+* optional note
+
+They are not sent to Firebase by default.
+
+### Monthly Leaderboard
+
+The leaderboard is opt-in.
+
+When the user chooses to join the leaderboard, the app writes aggregated public data to Firestore:
+
+* `displayName`
+* `month`
+* `count`
+* `updatedAt`
+
+The leaderboard does not store:
+
+* specific record time
+* private note
+* full local history
+
+## Tech Stack
+
+* Node.js
+* Vite
+* Vanilla JavaScript
+* Firebase Firestore
+* Firebase Authentication
+* PWA / Service Worker
+* Vercel
+
+## Project Structure
+
+```text
 .
-├── src/                    # 源碼
-│   ├── main.js             # 入口
-│   ├── firebase.js         # Firebase 初始化
-│   ├── auth.js             # 登入 / 註冊
-│   ├── records.js          # 本機紀錄
-│   ├── stats.js            # 本地統計
-│   ├── leaderboard.js      # 排行榜讀取
-│   ├── leaderboardSync.js  # 排行榜 opt-in 寫入
+├── src/
+│   ├── main.js
+│   ├── firebase.js
+│   ├── records.js
+│   ├── stats.js
+│   ├── leaderboard.js
+│   ├── leaderboardSync.js
+│   ├── auth.js
 │   └── ...
-├── public/                 # 靜態資源（manifest、service-worker、icons）
+├── public/
+│   ├── manifest.json
+│   ├── service-worker.js
+│   └── icons/
 ├── docs/
-│   └── ARCHITECTURE.md     # 架構與部署說明
+│   └── ARCHITECTURE.md
 ├── index.html
-├── vercel.json             # Vercel 建置設定
-├── firebase.json           # 歷史檔（Hosting 未使用；規則見 FIRESTORE_RULES_*.md）
+├── about.html
+├── terms.html
+├── privacy.html
+├── vercel.json
+├── firebase.json
 └── package.json
 ```
 
-## 開發
+## Local Development
 
 ```bash
 npm install
-npm run dev       # 開發伺服器 http://localhost:3000
-npm run build     # 輸出 dist/
-npm run preview   # 預覽建置結果
+npm run dev
 ```
 
-## 部署
+Preview build:
 
-**本專案網站只部署到 Vercel，不使用 Firebase Hosting。**
+```bash
+npm run build
+npm run preview
+```
 
-### 自動部署（推薦）
+## Deployment
 
-將 GitHub 倉庫連接 Vercel 後，推送到 `main` 即自動建置部署。詳見 [VERCEL_SETUP.md](VERCEL_SETUP.md)。
+This project uses Vercel as the only official frontend hosting platform.
 
-### 手動部署
+Recommended deployment flow:
+
+```text
+Push to GitHub main branch
+↓
+Vercel automatically builds and deploys
+↓
+Production site updates
+```
+
+Manual deployment:
 
 ```bash
 npm run deploy:vercel
 ```
 
-需已安裝並登入 [Vercel CLI](https://vercel.com/docs/cli)。
+Firebase Hosting is not used for this project.
 
-### Firebase 後台（非網站部署）
+## Firebase Notes
 
-在 [Firebase Console](https://console.firebase.google.com/) 維護：
+Firebase is used only for backend services:
 
-- **Firestore 安全規則** — 見 `FIRESTORE_RULES_COMPLETE.txt`
-- **Authentication** — Email/密碼登入
-- **Composite Index** — `monthlyLeaderboard`：`month` ↑、`count` ↓
+* Firestore leaderboard collection: `monthlyLeaderboard`
+* Firebase Authentication
+* Firestore security rules
 
-請勿執行 `firebase deploy` 部署網站；`package.json` 已停用 `deploy:firebase` script。
+The old `records` and `messages` collections are not used by the current app flow.
 
-## 功能模組
+Required Firestore composite index:
 
-- **本機紀錄** — 時間、備註保存在 `localStorage`
-- **本地統計** — 距離上次、本月次數、平均間隔、最近 10 筆
-- **排行榜** — opt-in 後同步至 Firestore `monthlyLeaderboard`
-- **跨裝置同步** — Firebase Auth（進階，開發中）
-- **主題 / 語言** — 淺色深色、繁中 / 英文 / 簡中
+```text
+Collection: monthlyLeaderboard
+Fields:
+- month ascending
+- count descending
+```
 
-## 注意事項
+Firestore rules are maintained separately in:
 
-- Firebase 設定在 `src/firebase.js`
-- 部署前請確認 `npm run build` 成功
-- 架構與資料流詳見 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+```text
+FIRESTORE_RULES_COMPLETE.txt
+```
+
+## Privacy Principle
+
+This project follows a local-first privacy model.
+
+The user can use the core record function without logging in and without sending private records to a server.
+
+Only leaderboard participation sends limited public aggregate data.
+
+## Status
+
+Final optimized version.
+Project closed as a completed vibe coding work.
